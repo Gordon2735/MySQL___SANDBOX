@@ -7,9 +7,6 @@ import { Sequelize } from 'sequelize';
 
 const config = await getConfig();
 
-console.info(getConfig());
-console.info('config.applicationName: ', config.applicationName);
-
 const PORT = config.port;
 const HOST = config.host;
 const serverUrl = config.serverUrl;
@@ -70,14 +67,16 @@ function onListening() {
 	console.info(`${config.applicationName} listening on ${bind}`);
 }
 server.on('error', onError);
-server.on('listening', onListening, () => {
+server.on('listening', onListening(), () => {
+	//stream = onListening();
 	console.log(
 		`
 			Server is listening on port ${PORT},
 			Open your browser on ${serverUrl}/,
 			Press Ctrl+C to quit.
 
-			On Listening: ${onListening}
-		`
+			`
 	);
 });
+
+// On Listening: ${onListening}

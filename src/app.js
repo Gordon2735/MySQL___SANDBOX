@@ -3,19 +3,18 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import router from './controllers/routes/api.js';
+import router from './controllers/router.js';
 
 export default function app(config) {
 	const app = express();
 
 	const __filename = fileURLToPath(import.meta.url);
 	const __dirname = path.dirname(__filename);
-	app.set('views', path.join(__dirname, 'views'));
+	// app.set('views', path.join(__dirname, 'views'));
 
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 	// app.use('view cache');
-	app.use(express.static('public'));
 
 	app.set('trust proxy', 1); // trust first proxy
 
