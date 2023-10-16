@@ -1,11 +1,11 @@
 'use strict';
 
-import router from './api.js';
+import express from 'express';
+import indexHandler, { aboutHandler } from './route_handlers/index_handler.js';
 
-const index_route = router.get('/views/index.html', (_req, res) => {
-	res.set('Content-Type', 'text/html');
+const router = express.Router();
 
-	res.render('index.html');
-});
+const index_route = router.get('/', indexHandler);
+const about_route = router.get('/', aboutHandler);
 
-export default index_route;
+export { index_route as default, about_route };

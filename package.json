@@ -11,10 +11,14 @@
 	"author": "Gordon R Mullen Jr <webelistics@gmail.com>",
 	"license": "MIT",
 	"dependencies": {
+		"cors": "^2.8.5",
 		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
+		"express-handlebars": "^7.1.2",
+		"morgan": "^1.10.0",
 		"mysql2": "^3.6.1",
-		"sequelize": "^6.33.0"
+		"sequelize": "^6.33.0",
+		"serve-favicon": "^2.5.0"
 	},
 	"devDependencies": {
 		"nodemon": "^3.0.1"

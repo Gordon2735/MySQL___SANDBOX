@@ -1,13 +1,13 @@
-'use strict';
+// 'use strict';
 
-import express from 'express';
+// import express from 'express';
 
-const router = express.Router();
+// const router = express.Router();
 
-router.get('/views', (req, res) => {
-	res.json({
-		message: 'Welcome to the API!'
-	});
-});
+// router.get('/', (req, res) => {
+// 	res.json({
+// 		message: 'Welcome to the API!'
+// 	});
+// });
 
-export default router;
+// export default router;

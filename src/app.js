@@ -1,31 +1,50 @@
 'use strict';
 
 import express from 'express';
+import { create } from 'express-handlebars';
 import path from 'path';
+import morgan from 'morgan';
+import cors from 'cors';
 import { fileURLToPath } from 'url';
 import router from './controllers/router.js';
+import helper from '../public/views/helpers/helpers.js';
+import favicon from 'serve-favicon';
 
-export default function app(config) {
+export default function (config) {
 	const app = express();
 
 	const __filename = fileURLToPath(import.meta.url);
 	const __dirname = path.dirname(__filename);
-	// app.set('views', path.join(__dirname, 'views'));
+
+	const handlebars = create({
+		extname: '.hbs',
+		defaultLayout: 'main',
+		layoutsDir: path.join(__dirname, '..', 'public', '/views/layouts'),
+		partialsDir: path.join(__dirname, '..', 'public', '/views/partials'),
+		helpers: { ...helper }
+	});
+
+	app.engine('.hbs', handlebars.engine);
+	app.set('view engine', '.hbs');
+	app.set('views', path.join(__dirname, '..', 'public', '/views'));
+	app.set('trust proxy', 1); // trust first proxy
+	app.enable('view cache');
+
+	// app.use(express.static(path.join(__dirname, '..', 'public', '/views')));
+	// console.info(`__dirname:  ${__dirname}`);
 
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
-	// app.use('view cache');
-
-	app.set('trust proxy', 1); // trust first proxy
-
-	app.use(express.static(path.join(__dirname, 'public')));
-	app.use(express.static(path.join(__dirname, './css/index.css')));
+	app.use(
+		favicon(path.join(__dirname, '..', 'public', '/images/tw_logo.ico'))
+	);
+	// app.use(express.static('views'));
+	app.use(`/`, router);
+	app.use(morgan('dev'));
+	app.use(cors());
 
 	app.get('/favicon.ico', (_req, res) => {
 		res.status(204);
-	});
-	app.get('/', (_req, res) => {
-		res.send(path.join(__dirname, './public/images/tw_logo.ico'));
 	});
 
 	app.use(async (req, res, next) => {
@@ -33,8 +52,6 @@ export default function app(config) {
 		res.locals.applicationName = await config.applicationName;
 		return next();
 	});
-
-	app.use('/', router);
 
 	// catch 404 and forward to error handler
 	app.use((req, res, next) => {
@@ -51,6 +68,12 @@ export default function app(config) {
 		// render the error page
 		res.status(err.status || 500);
 		res.render('error');
+	});
+
+	// set Global Variables
+	app.use(function (_req, res, next) {
+		if (res.locals.partials) res.locals.partials = {};
+		next();
 	});
 
 	return app;
