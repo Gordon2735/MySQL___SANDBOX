@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import router from './controllers/router.js';
 import helper from '../public/views/helpers/helpers.js';
 import favicon from 'serve-favicon';
+import loggedEventControl from './controllers/routes/route_handlers/logger_handlers.js';
 
 export default function (config) {
 	const app = express();
@@ -30,18 +31,20 @@ export default function (config) {
 	app.set('trust proxy', 1); // trust first proxy
 	app.enable('view cache');
 
-	// app.use(express.static(path.join(__dirname, '..', 'public', '/views')));
-	// console.info(`__dirname:  ${__dirname}`);
+	app.use(express.static(path.join(__dirname, '..', 'public', '/views')));
+	console.info(`__dirname:  ${__dirname}`);
 
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
+	app.use(morgan('dev'));
+	app.use(cors());
 	app.use(
 		favicon(path.join(__dirname, '..', 'public', '/images/tw_logo.ico'))
 	);
-	// app.use(express.static('views'));
+
+	app.use(express.static('public'));
+	app.use(express.static('src'));
 	app.use(`/`, router);
-	app.use(morgan('dev'));
-	app.use(cors());
 
 	app.get('/favicon.ico', (_req, res) => {
 		res.status(204);
@@ -75,6 +78,8 @@ export default function (config) {
 		if (res.locals.partials) res.locals.partials = {};
 		next();
 	});
+	// This Function controls the logged event triggered || emitted by the logger.
+	loggedEventControl();
 
 	return app;
 }

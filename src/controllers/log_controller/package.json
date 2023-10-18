@@ -1,0 +1,15 @@
+{
+	"name": "log_controller",
+	"version": "1.0.0",
+	"description": "Logging controller",
+	"main": "logging.js",
+	"type": "module",
+	"scripts": {
+		"test": "jest"
+	},
+	"author": "Gordon R Mullen Jr <webelistics@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"uuid": "^9.0.1"
+	}
+}

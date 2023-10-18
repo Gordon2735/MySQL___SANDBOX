@@ -6,13 +6,13 @@ import App from '../app.js';
 import { Sequelize } from 'sequelize';
 import { EventEmitter } from 'node:events';
 
-const configs = await getConfig();
+const config = await getConfig();
 
-const port = configs.port || 9080;
-const host = configs.host;
-const serverUrl = configs.serverUrl;
+const port = config.port || 9080;
+const host = config.host;
+const serverUrl = config.serverUrl;
 
-const sequelize = new Sequelize(configs.mysql.options);
+const sequelize = new Sequelize(config.mysql.options);
 function connectToMySQL() {
 	sequelize
 		.authenticate()
@@ -29,10 +29,10 @@ function connectToMySQL() {
 }
 
 const mysql = connectToMySQL();
-configs.client = mysql;
+config.client = mysql;
 
 // Logic to start the server
-const app = App(configs);
+const app = App(config);
 const server = http.createServer(app);
 
 await turnOnListenerFunc();
@@ -74,23 +74,23 @@ async function onListening() {
 
 		setTimeout(() => {
 			const server_address = server.address({
-				port: configs.port,
-				host: configs.host,
+				port: config.port,
+				host: config.host,
 				family: 'IPv6',
-				address: configs.serverUrl
+				address: config.serverUrl
 			});
 			console.log(
-				`server_address: ${configs.host}:${server_address.port}`
+				`server_address: ${config.host}:${server_address.port}`
 			);
 
 			if (server_address) {
 				const bind =
 					typeof server_address === 'string'
-						? `pipe ${configs.host}`
+						? `pipe ${config.host}`
 						: `port ${server_address.port}`;
 
 				console.info(
-					`Application Name:  ${configs.applicationName} listening on ${bind}`
+					`Application Name:  ${config.applicationName} listening on ${bind}`
 				);
 				ServerEmitter();
 			} else {
@@ -98,7 +98,7 @@ async function onListening() {
 					'Server address is null. Ensure the server is started and listening.'
 				);
 			}
-		}, 500);
+		}, 300);
 	} catch (error) {
 		console.error(`Error in onListening: ${error}`);
 	}
