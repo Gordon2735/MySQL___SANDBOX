@@ -50,6 +50,13 @@ export default function (config) {
 		res.status(204);
 	});
 
+	app.get('/start_logger', (req, res) => {
+		console.info(`req.url: ${req.url}`);
+		console.info('Start Logger Event has been Logged!');
+		// This Function controls the logged event triggered || emitted by the logger.
+		loggedEventControl();
+	});
+
 	app.use(async (req, res, next) => {
 		// To show the Application Name on the page.
 		res.locals.applicationName = await config.applicationName;
@@ -78,8 +85,6 @@ export default function (config) {
 		if (res.locals.partials) res.locals.partials = {};
 		next();
 	});
-	// This Function controls the logged event triggered || emitted by the logger.
-	loggedEventControl();
 
 	return app;
 }

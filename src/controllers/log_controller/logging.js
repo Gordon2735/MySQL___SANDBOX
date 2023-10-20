@@ -1,8 +1,7 @@
 'use strict';
 
 import { EventEmitter } from 'node:events';
-import * as fs from 'node:fs/promises';
-import { writeFile } from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuid4 } from 'uuid';
@@ -16,44 +15,38 @@ class Logger extends EventEmitter {
 
 		this.logFilePath = path.join(
 			__dirname,
-			'..',
-			'..',
-			'..',
-			'logs',
-			'/event_logs',
-			'/event_logs.json'
+			'../../../logs/event_logs',
+			'event_logs.json'
 		);
 		this.logData = [];
 		this.loadLogData();
+		// this.loadLogData({ id: '', timestamp: '', event: '', data: {} });
 	}
 
 	async loadLogData() {
 		try {
-			const data = fs.readFile(this.logFilePath, 'utf8');
+			const data = fs.readFileSync(this.logFilePath, {
+				encoding: 'utf8',
+				flag: 'r'
+			});
 			this.logData = JSON.parse(data);
 		} catch (error) {
-			console.info(
-				`
-                    Error in class method loadLogData()
-                     when loading log data: ${error}
-                `
-			);
-			return;
+			this.logData = [];
 		}
 	}
 
-	async logEvent(eventName, eventData) {
+	logEvent(eventName, eventData) {
 		const logEntry = {
 			id: uuid4(), //Generate a unique ID
 			timestamp: new Date().toISOString(),
-			event: await eventName,
-			data: await eventData
+			event: eventName,
+			data: eventData
 		};
 		this.logData.push(logEntry);
 		this.emit('logged', logEntry);
 
 		// Write log data to the file
-		await writeFile(
+		fs.writeFileSync(
 			this.logFilePath,
 			JSON.stringify(this.logData),
 			null,

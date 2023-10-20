@@ -29,7 +29,7 @@ body {
     border-radius: 1.78em;
     background-color: hsla(187, 52%, 80%, 0.993);
     filter: drop-shadow(0 0 0.75rem hsla(0, 0%, 0%, 0.673));
-    box-shadow: inset 0.7em 0.7em 0.15rem hsla(0, 0%, 0%, 0.273);
+    box-shadow: inset 0.4em 0.4em 1.15em hsla(0, 0%, 0%, 0.473);
 }
 
 .header-main .header-h1 {
@@ -57,4 +57,97 @@ body {
     color: hsla(0, 0%, 0%, 0.973);
     letter-spacing: 0.1333em;
 
+}
+
+@media screen and (max-width: 1790px) {
+    .header-main .header-h1 {
+        font-size: 1.9rem;
+    }
+}
+
+@media screen and (max-width: 1620px) {
+    .header-main {
+        height: auto;
+        border: 1.45em solid hsla(248, 53%, 58%, 0.979);
+        box-shadow: inset 0.4em 0.4em 0.55em hsla(0, 0%, 0%, 0.473);
+    }
+
+    .header-main .header-h1 {
+        font-size: 1.5rem;
+    }
+
+    .header-main .header-h2 {
+        font-size: 1.223rem;
+    }
+}
+
+@media screen and (max-width: 1260px) {
+    .header-main .header-h1 {
+        font-size: 1.1rem;
+    }
+
+    .header-main .header-h2 {
+        font-size: 0.8rem;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .header-main {
+        height: auto;
+        border: 0.85rem solid hsla(248, 53%, 58%, 0.979);
+        box-shadow: inset 0.2em 0.2em 0.35em hsla(0, 0%, 0%, 0.473);
+    }
+
+    .header-main .header-h1 {
+        font-size: 0.85rem;
+    }
+
+    .header-main .header-h2 {
+        font-size: 0.72rem;
+    }
+}
+
+@media screen and (max-width: 710px) {
+    .header-main {
+        height: auto;
+        border: 0.65rem solid hsla(248, 53%, 58%, 0.979);
+    }
+
+    .header-main .header-h1 {
+        font-size: 0.65rem;
+    }
+
+    .header-main .header-h2 {
+        font-size: 0.42rem;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .header-main {
+        height: auto;
+        border: 0.35rem solid hsla(248, 53%, 58%, 0.979);
+    }
+
+    .header-main .header-h1 {
+        font-size: 0.35rem;
+    }
+
+    .header-main .header-h2 {
+        font-size: 0.17rem;
+    }
+}
+
+@media screen and (max-width: 300px) {
+    .header-main {
+        height: auto;
+        border: 0.15rem solid hsla(248, 53%, 58%, 0.979);
+    }
+
+    .header-main .header-h1 {
+        font-size: 0.18rem;
+    }
+
+    .header-main .header-h2 {
+        font-size: 0.1rem;
+    }
 }
