@@ -1,23 +1,32 @@
 'use strict';
 
-import express from 'express';
-import { create } from 'express-handlebars';
+import express, {
+	Application,
+	Request,
+	Response,
+	NextFunction,
+	Router
+} from 'express';
+import { create, ExpressHandlebars } from 'express-handlebars';
 import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import router from './controllers/router.js';
 import helper from '../public/views/helpers/helpers.js';
-import favicon from 'serve-favicon';
+import favicon from 'express-favicon';
 import loggedEventControl from './controllers/routes/route_handlers/logger_handlers.js';
+import ErrorHandler from './errors/error_handler.js';
 
-export default function (config) {
-	const app = express();
+export default function (config: { applicationName: any }) {
+	const app: Application = express();
 
-	const __filename = fileURLToPath(import.meta.url);
-	const __dirname = path.dirname(__filename);
+	const __filename: string = fileURLToPath(import.meta.url);
+	const __dirname: string = path.dirname(__filename);
+	const errors: ErrorHandler = new ErrorHandler(404, 'Not Found');
+	const routers: Router = router;
 
-	const handlebars = create({
+	const handlebars: ExpressHandlebars = create({
 		extname: '.hbs',
 		defaultLayout: 'main',
 		layoutsDir: path.join(__dirname, '..', 'public', '/views/layouts'),
@@ -44,44 +53,55 @@ export default function (config) {
 
 	app.use(express.static('public'));
 	app.use(express.static('src'));
-	app.use(`/`, router);
+	app.use(`/`, routers);
 
-	app.get('/favicon.ico', (_req, res) => {
+	app.get('/favicon.ico', (_req: Request, res: Response) => {
 		res.status(204);
 	});
 
-	app.get('/start_logger', (req, res) => {
+	app.use('/start_logger', async (req: Request, _res: Response) => {
 		console.info(`req.url: ${req.url}`);
 		console.info('Start Logger Event has been Logged!');
 		// This Function controls the logged event triggered || emitted by the logger.
-		loggedEventControl();
+		loggedEventControl(req, _res);
 	});
 
-	app.use(async (req, res, next) => {
+	app.use(async (_req: Request, res: Response, next: NextFunction) => {
 		// To show the Application Name on the page.
 		res.locals.applicationName = await config.applicationName;
 		return next();
 	});
 
 	// catch 404 and forward to error handler
-	app.use((req, res, next) => {
-		const err = new Error(`Not Found (${req.url})`);
-		err.status = 404;
-		next(err);
+	app.use((req: Request, _res: Response, next: NextFunction) => {
+		const error: Error = new Error(`Not Found (${req.url})`);
+		errors.message = error.message;
+		next(error);
 	});
 
 	// error handler
-	app.use((err, req, res) => {
-		// set locals, only providing error in development
-		res.locals.error = req.app.get('env') === 'development' ? err : {};
+	app.use(
+		(
+			error: unknown,
+			req: Request,
+			res: Response,
+			next: NextFunction,
+			errorStatus: number = 500
+		) => {
+			// set locals, only providing error in development
+			res.locals.error =
+				req.app.get('env') === 'development' ? error : {};
 
-		// render the error page
-		res.status(err.status || 500);
-		res.render('error');
-	});
+			// render the error page
+			errorStatus = errors.status;
+			res.status(errorStatus || 500);
+			res.render('error');
+			next();
+		}
+	);
 
 	// set Global Variables
-	app.use(function (_req, res, next) {
+	app.use(function (_req: Request, res: Response, next: NextFunction) {
 		if (res.locals.partials) res.locals.partials = {};
 		next();
 	});

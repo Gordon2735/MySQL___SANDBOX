@@ -1,13 +1,16 @@
 'use strict';
 
+import { Request, Response } from 'express';
 import Logger from '../../log_controller/logging.js';
 
-const logger = new Logger();
+const logger: Logger = new Logger();
 
 // Initial route to trigger the logger events.
-const startLogger_handler = (req, res) => {
-	const eventName = 'customEvent';
-	const eventData = { message: 'Start Event has been Logged!' };
+const startLogger_handler = (_req: Request, res: Response): void => {
+	const eventName: 'customEvent' = 'customEvent';
+	const eventData: {
+		message: string;
+	} = { message: 'Start Event has been Logged!' };
 
 	// Log the Event
 	logger.logEvent(eventName, eventData);
@@ -16,7 +19,7 @@ const startLogger_handler = (req, res) => {
 };
 
 // Control the logged event emitted by the logger.
-function loggedEventControl() {
+function loggedEventControl(): void {
 	logger.on('logged', (logEntry) => {
 		console.info(
 			`Logged Event: ${logEntry.event} at ${logEntry.timestamp}`
