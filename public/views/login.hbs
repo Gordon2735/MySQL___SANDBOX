@@ -1,0 +1,134 @@
+{{> header}}
+
+<header id="loginHeader" class="login-header">
+    <h1 class="login-header__title">Login</h1>
+    <p class="login-header__text">
+        Please enter your credentials to login.
+    </p>
+    <p id="newUserPara" class="new-user-para">
+        New user? <a href="/register">Register here</a>
+    </p>
+</header>
+
+<section id="loginSection" class="login-section">
+    <form action="/login/:username" id="loginForm" class="login-form">
+        <div class="login-form__group">
+            <label for="username" class="login-form__label">Username</label>
+            <input type="text" name="username" id="username" class="login-form__input" placeholder="Enter your username" required>
+        </div>
+
+        <div class="login-form__group">
+            <label for="password" class="login-form__label">Password</label>
+            <input type="password" name="password" id="password" class="login-form__input" placeholder="Enter your password" required>
+        </div>
+
+        <div class="login-form__group">
+            <button type="submit" class="login-form__button">Login</button>
+        </div>
+    </form>
+</section>
+
+
+
+{{> footer}}
+
+<style>
+    .login-header {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .new-user-para {
+        margin-top: 0;
+    }
+  
+    .login-section {
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .login-form {
+        margin-top: 0;
+        display: inline-block;
+        text-align: left;
+    }
+
+    .login-header .login-header__title {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .login-header .login-header__text {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
+    .login-header .new-user-para {
+        font-size: 1.2rem;
+    }
+
+    .login-header .new-user-para a {
+        color: #007bff;
+    }
+
+    .login-form .login-form__group {
+        margin-bottom: 20px;
+    }
+
+    .login-form .login-form__label {
+        display: block;
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+
+    .login-form .login-form__input {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 1.2rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .login-form .login-form__button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 1.2rem;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .login-form .login-form__button:hover {
+        background-color: #0069d9;
+    }
+
+    .login-form .login-form__button:active {
+        background-color: #0069d9;
+    }
+
+    .login-form .login-form__button:focus {
+        outline: none;
+    }
+
+    .login-form .login-form__button:disabled {
+        background-color: #007bff;
+        cursor: not-allowed;
+    }
+
+    .login-form .login-form__button:disabled:hover {
+        background-color: #007bff;
+    }
+
+    .login-form .login-form__button:disabled:active {
+        background-color: #007bff;
+    }
+
+    .login-form .login-form__button:disabled:focus {
+        outline: none;
+    }
+
+</style>

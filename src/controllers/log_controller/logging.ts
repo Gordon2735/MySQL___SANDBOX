@@ -1,6 +1,7 @@
 'use strict';
 
 import { EventEmitter } from 'node:events';
+import express from 'express';
 import fs from 'node:fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -8,12 +9,16 @@ import { v4 as uuid4 } from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const app = express();
 
 class Logger extends EventEmitter {
 	logFilePath: string;
 	logData: any[];
 	constructor() {
 		super();
+
+		app.use(express.json());
+		app.use(express.urlencoded({ extended: true }));
 
 		this.logFilePath = path.join(
 			__dirname,

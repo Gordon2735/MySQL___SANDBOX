@@ -1,0 +1,49 @@
+{{> header}}
+
+<main id="registerMain" class="register-main">
+    <figure id="registerHeader" class="register-header">
+        <img src="../images/" alt="">
+        <figcaption class="register-header__caption">
+            Register here for Team Webelistics®️ LLC MySQL Tutorial
+        </figcaption>
+    </figure>
+
+    <section id="registerSection" class="register-section">
+        <h1 class="register-header__title">Create Your Account</h1>
+        <p class="register-header__text">
+            Please enter your credentials to register.
+        </p>
+
+        <form id="registerForm" class="register-form" action="/register" method="POST">
+            <div class="register-form__group">
+                <label for="username" class="register-form__label">Username</label>
+                <input type="text" name="username" id="username" class="register-form__input" placeholder="Enter your username" required>
+            </div>
+
+            <div class="register-form__group">
+                <label for="email" class="register-form__label">Email</label>
+                <input type="email" name="email" id="email" class="register-form__input" placeholder="Enter your email" required>
+            </div>
+
+            <div class="register-form__group">
+                <label for="password" class="register-form__label">Password</label>
+                <input type="password" name="password" id="password" class="register-form__input" placeholder="Enter your password" required>
+            </div>
+
+            <div class="register-form__group">
+                <label for="confirmPassword" class="register-form__label">Confirm Password</label>
+                <input type="password" name="confirmPassword" id="confirmPassword" class="register-form__input" placeholder="Confirm your password" required>
+            </div>
+
+            <div class="register-form__group">
+                <button type="submit" class="register-form__button">Register</button>
+            </div>
+        </form>
+
+        <p id="newUserPara" class="new-user-para">
+            Already registered? <a href="/login">Login here</a>
+        </p>        
+    </section>
+</main>
+
+{{> footer}}

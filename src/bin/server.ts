@@ -1,16 +1,19 @@
 'use strict';
 
 import getConfig from '../../config/config.js';
+import { Application } from 'express';
+import { connection } from '../models/databases/mysqlDB.js';
+import {
+	createPool,
+	Pool,
+	PoolConnection,
+	RowDataPacket,
+	ResultSetHeader,
+	ProcedureCallPacket
+} from 'mysql2/promise';
 import http from 'http';
 import App from '../app.js';
 import { EventEmitter } from 'node:events';
-import {
-	Connection,
-	createConnection,
-	OkPacketParams,
-	QueryError,
-	RowDataPacket
-} from 'mysql2/promise';
 import { AddressInfo } from 'node:net';
 
 const config = await getConfig();
@@ -19,62 +22,47 @@ const port: string | number = config.port || 9080;
 const host: string = config.host;
 const serverUrl: string = config.serverUrl;
 
-const connection: Promise<Connection> = createConnection({
-	host: config.mysql.options.host,
-	user: config.mysql.options.username,
-	password: config.mysql.options.password,
-	database: config.mysql.options.database
-});
+const pool: Pool = createPool(config.mysql.options);
 
-async function startMySQLConnection(
-	conn: Promise<Connection>
-): Promise<Connection | undefined> {
+async function executeMysqlQuery<
+	T extends
+		| RowDataPacket[]
+		| ResultSetHeader
+		| RowDataPacket[][]
+		| ProcedureCallPacket = RowDataPacket[]
+>(query: string, values?: any[]): Promise<T> {
+	let conn: PoolConnection | undefined;
 	try {
-		(await conn).connect();
-		const user: Connection = (await conn).on('users', (...args) => {
-			console.log(`The 'users' event has been emitted:`, ...args);
-			return user.emit('users', ...args);
-		});
-		console.log(`Connected to MySQL as id ${(await conn).threadId}`);
-		return user;
-	} catch (error: any) {
-		function catchError(result: OkPacketParams, rows: RowDataPacket[]) {
-			const errors: QueryError = error;
-			const catchResult = result.affectedRows;
-			const solution = rows[0];
-
-			if (error) {
-				console.error(
-					`Error connecting to MySQL: ${error}`,
-					`The catch result is: ${catchResult}`,
-					`The solution is: ${solution}`
-				);
-			} else {
-				console.error(`Error connecting to MySQL: ${errors}`);
-			}
+		conn = await pool.getConnection();
+		const [rows] = await conn.execute<T>(query, values);
+		return rows;
+	} catch (error: unknown) {
+		console.error(`Error in executeMysqlQuery: ${error}`);
+		throw error as any as unknown;
+	} finally {
+		if (conn) {
+			conn.release();
 		}
-		// const clientQuery = await config.client.query('SELECT 1+1 AS solution');
-		catchError({}, []);
 	}
 }
 
-const mysqlConnection: Promise<Connection | undefined> =
-	startMySQLConnection(connection);
-config.client = mysqlConnection;
-
 // Logic to start the server
-const app = App(config);
-const server = http.createServer(app);
+const app: Application = App(config);
+const server: http.Server<
+	typeof http.IncomingMessage,
+	typeof http.ServerResponse
+> = http.createServer(app);
 
-await turnOnListenerFunc();
+await turnOnListener();
 
-async function turnOnListenerFunc() {
+async function turnOnListener() {
 	try {
 		server.on('error', onError);
 		server.listen(port, () => {
 			console.info(`MySQL Sandbox Server is Listening at ${serverUrl}`);
 		});
 		onListening();
+		// await startMysqlConnection();
 	} catch (error: unknown) {
 		console.error(`Error in the turnOnListenerFunc() Function: ${error}`);
 	}
@@ -162,4 +150,4 @@ async function ServerEmitter(): Promise<void> {
 
 	serverEmitter.emit('event', 1, 2, 3, 4, 5);
 }
-export { connection };
+export { connection as default, executeMysqlQuery };

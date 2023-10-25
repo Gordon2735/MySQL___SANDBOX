@@ -53,7 +53,7 @@ export default function (config: { applicationName: any }) {
 
 	app.use(express.static('public'));
 	app.use(express.static('src'));
-	app.use(`/`, routers);
+	app.use('/', routers);
 
 	app.get('/favicon.ico', (_req: Request, res: Response) => {
 		res.status(204);
