@@ -6,7 +6,8 @@ import indexHandler, {
 	registerPostHandler,
 	loginHandler,
 	loginPostHandler,
-	aboutHandler
+	aboutHandler,
+	dataViewHandler
 } from './route_handlers/route_handlers.js';
 import startLogger_handler from './route_handlers/logger_handlers.js';
 
@@ -21,9 +22,18 @@ const registerPost_route: express.Router = router.post(
 );
 
 const login_route: express.Router = router.get('/login', loginHandler);
-const loginPost_route: express.Router = router.post('/login', loginPostHandler);
+const loginPost_route: express.Router = router.post('/login', (req, res) => {
+	loginPostHandler;
+	res.redirect('/login/data_view');
+});
 
 const about_route: express.Router = router.get('/about', aboutHandler);
+
+const dataView_route: express.Router = router.get(
+	'/login/data_view',
+	dataViewHandler
+);
+
 const startLogger_route: express.Router = router.get(
 	'/start_logger',
 	startLogger_handler
@@ -36,5 +46,6 @@ export {
 	login_route,
 	loginPost_route,
 	about_route,
+	dataView_route,
 	startLogger_route
 };

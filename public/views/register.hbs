@@ -1,8 +1,8 @@
-{{> header}}
+{{> header_partial}}
 
 <main id="registerMain" class="register-main">
     <figure id="registerHeader" class="register-header">
-        <img src="../images/" alt="">
+        <img src="../images/tw_logo.svg" class="figure-logo" alt="Team Webelistics®️ LLC Logo Image">
         <figcaption class="register-header__caption">
             Register here for Team Webelistics®️ LLC MySQL Tutorial
         </figcaption>
@@ -46,4 +46,159 @@
     </section>
 </main>
 
-{{> footer}}
+{{> footer_partial}}
+
+
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&family=Titillium+Web:ital,wght@0,200;0,400;0,700;1,200&display=swap');
+		`${font-family: 'Source Code Pro', monospace}`;
+		`${font-family: 'Titillium Web', sans-serif}`;
+            
+    .register-main {
+        margin: 8em auto 3em auto;
+        padding: 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 640px;
+        height: auto;
+        text-align: center;
+        background-color: hsla(0, 0%, 65%, 0.993);
+        filter: drop-shadow(0 0 0.75rem hsla(0, 0%, 0%, 0.673));
+        box-shadow: inset 0.4em 0.4em 1.15em hsla(0, 0%, 0%, 0.473);
+        border: 3.7em solid hsla(207, 44%, 49%, 0.993);
+		border-radius: 10px;
+    }
+
+    .register-main .register-header {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    .register-header .figure-logo {
+        margin: 3em auto 1em auto;
+        display: inline-block;
+        width: 15em;
+        height: auto;
+    }
+
+    .register-header .register-header__caption {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: hsla(207, 44%, 49%, 0.993);
+        text-shadow: 0.1em 0.1em 0.2em hsla(0, 0%, 0%, 0.773);
+    }
+
+    .register-section {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    .register-header__title {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Titillium Web', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: hsla(207, 44%, 49%, 0.993);
+        text-shadow: 0.1em 0.1em 0.2em hsla(0, 0%, 0%, 0.773);
+    }
+
+    .register-header__text {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Source Code Pro', monospace;
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: hsla(0, 0%, 0%, 0.993);
+        text-shadow: 0.1em 0.1em 0.2em hsla(0, 0%, 0%, 0.773);
+    }
+
+    .register-form {
+        margin-top: 0;
+        display: inline-block;
+        text-align: left;
+    }
+
+    .register-form .register-form__label {
+        margin-bottom: 5px;
+        display: block;
+        font-family: 'Source Code Pro', monospace;
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: hsla(0, 0%, 0%, 0.993);
+        text-shadow: 0.1em 0.1em 0.2em hsla(0, 0%, 0%, 0.773);
+    }
+
+    .register-form .register-form__input {
+        margin-bottom: 10px;
+        display: block;
+        width: 80%;
+        padding: 10px;
+        font-size: 1.2rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .register-form .register-form__button {
+    	display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 20em;
+		height: 12em;
+		background-color: hsla(0, 1%, 67%, 0.993);
+		border: 0.7em solid hsla(207, 44%, 49%, 0.993);
+		border-radius: 7px;
+		font-family: 'Source Code Pro', monospace;
+		font-size: 0.97rem;
+		font-weight: 400;
+		color: hsla(207, 44%, 49%, 0.993);
+		cursor: pointer;
+		filter: drop-shadow(1em 1em 2em hsla(0, 0%, 0%, 0.793));
+		box-shadow: inset 0 0 0.5em hsla(0, 0%, 0%, 0.493);
+    }
+
+    .register-form .register-form__button:hover {
+        background-color: hsla(248, 39%, 39%, 0.555);
+		color: hsla(0, 0%, 100%, 0.993);
+		border: 1px solid hsla(0, 0%, 100%, 0.693);
+    }
+
+    .register-form .register-form__button:active {
+        background-color: hsla(248, 97%, 15%, 0.555);
+		color: hsla(0, 0%, 100%, 0.493);
+		border: 1px solid hsla(248, 94%, 81%, 0.979);
+		filter: drop-shadow(1em 1em 14em hsla(248, 94%, 81%, 0.579));
+		box-shadow: inset 0 0 0.5em hsla(248, 94%, 81%, 0.479);
+    }
+
+    .register-form .new-user-para {
+        font-family: 'Source Code Pro', monospace;
+		font-size: 0.77rem;
+		font-weight: 200;
+		color: hsla(207, 44%, 49%, 0.993);
+    }
+    
+</style>

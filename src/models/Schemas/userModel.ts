@@ -4,12 +4,13 @@ import { connection } from '../databases/mysqlDB.js';
 import { Connection } from 'mysql2/promise';
 import { RowDataPacket } from 'mysql2/promise';
 import { executeMysqlQuery } from '../../bin/server.js';
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 import bcrypt from 'bcryptjs';
 
 async function createUserTable(): Promise<void> {
-	const conn: Connection = await connection();
-	const query = `
+	try {
+		const conn: Connection = await connection();
+		const query = `
         CREATE TABLE IF NOT EXISTS users (
             id VARCHAR(255) PRIMARY KEY,
             username VARCHAR(255) UNIQUE NOT NULL,
@@ -17,8 +18,15 @@ async function createUserTable(): Promise<void> {
             password VARCHAR(255) NOT NULL
         )
     `;
-	await conn.query(query);
-	conn.end();
+		await conn.query(query);
+		conn.end();
+
+		return Promise.resolve() as Promise<void>;
+	} catch (error: unknown) {
+		console.error(`Error in createUserTable: ${error}`);
+		Promise.reject() as Promise<void>;
+		throw error as any as unknown;
+	}
 }
 
 async function insertUser(
@@ -26,32 +34,51 @@ async function insertUser(
 	email: string,
 	password: string
 ): Promise<void> {
-	const conn: Connection = await connection();
-	const id = uuid();
-	const hashedPassword = await bcrypt.hash(password, 10);
-	const query = `INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)`;
-	await conn.query(query, [id, username, email, hashedPassword]);
-	conn.end();
+	try {
+		const conn: Connection = await connection();
+		const id = uuid();
+		const hashedPassword = await bcrypt.hash(password, 10);
+		const query = `INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)`;
+		await conn.query(query, [id, username, email, hashedPassword]);
+		conn.end();
+
+		return Promise.resolve() as Promise<void>;
+	} catch (error: unknown) {
+		console.error(`Error in insertUser: ${error}`);
+		Promise.reject() as Promise<void>;
+		throw error as any as unknown;
+	}
 }
 
 async function findUserByUsername(username: string): Promise<any> {
-	const conn: Connection = await connection();
-	const query = `SELECT * FROM users WHERE username = ?`;
-	const [rows]: any = await conn.query(query, [username]);
-	conn.end();
+	try {
+		const conn: Connection = await connection();
+		const query = `SELECT * FROM users WHERE username = ?`;
+		const [rows]: any = await conn.query(query, username);
+		console.info(`rows: ${rows[0]}`);
+		conn.end();
 
-	return rows[0];
+		Promise.resolve() as Promise<void>;
+		return rows[0];
+	} catch (error: unknown) {
+		console.error(`Error in findUserByUsername: ${error}`);
+
+		Promise.reject() as Promise<void>;
+		throw error as any as unknown;
+	}
 }
 
-async function getRowsPacketUsers() {
+async function getRowsPacketUsers(): Promise<RowDataPacket[]> {
 	try {
-		const user: RowDataPacket[] = await executeMysqlQuery(
-			'SELECT * FROM user'
-		);
+		const query = `SELECT * FROM users`;
+		const user: RowDataPacket[] = await executeMysqlQuery(query, [null]);
 		console.info(user);
-		return;
+
+		Promise.resolve() as Promise<void>;
+		return user;
 	} catch (error: unknown) {
 		console.error(`Error in getRowsPacketUsers: ${error}`);
+		Promise.reject() as Promise<void>;
 		throw error as any as unknown;
 	}
 }

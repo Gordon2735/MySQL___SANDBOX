@@ -2,7 +2,7 @@
 
 import { RowDataPacket } from 'mysql2';
 
-export default interface IUser extends RowDataPacket {
+interface IUser extends RowDataPacket {
 	id?: number;
 	username: string;
 	password: string;
@@ -14,3 +14,13 @@ export default interface IUser extends RowDataPacket {
 	createdAt: Date;
 	updatedAt: Date;
 }
+
+interface PopoverElement extends HTMLElement {
+	toggle?(): void;
+}
+
+interface ButtonElementWithPopover extends HTMLButtonElement {
+	popoverContent?: PopoverElement;
+}
+
+export { IUser as default, PopoverElement, ButtonElementWithPopover };

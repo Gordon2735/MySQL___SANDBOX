@@ -8,9 +8,41 @@
         </h2>
     </header>
 
-    <main>
-    </main>
+    <button id="indexBtn" class="index-btn">
+        <a id="indexBtnA" class="index-btn-a" href="/register">Register</a>
+    </button>
 
-    <footer>
-    </footer>
+ 
 
+    {{> footer_partial}}
+
+    <style>
+        #indexBtn {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #000;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #indexBtn:hover {
+            background-color: #000;
+            color: #fff;
+        }
+
+        #indexBtnA {
+            text-decoration: none;
+            color: #000;
+        }
+
+        #indexBtnA:hover {
+            text-decoration: none;
+            color: #fff;
+        }
+    </style>

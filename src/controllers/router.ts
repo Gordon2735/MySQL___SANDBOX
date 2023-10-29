@@ -7,6 +7,7 @@ import index_route, {
 	login_route,
 	loginPost_route,
 	about_route,
+	dataView_route,
 	startLogger_route
 } from './routes/routes.js';
 
@@ -23,11 +24,13 @@ const routes: Router[] = [
 	login_route,
 	loginPost_route,
 	about_route,
+	dataView_route,
 	startLogger_route
 ];
 
 const thisRoute: express.Router = router;
 for (const route of routes) {
 	thisRoute.use(`/`, route);
+	console.info(`route: ${route}`);
 }
 export default router;

@@ -13,7 +13,7 @@ import {
 } from 'mysql2/promise';
 import http from 'http';
 import App from '../app.js';
-import { EventEmitter } from 'node:events';
+// import { EventEmitter } from 'node:events';
 import { AddressInfo } from 'node:net';
 
 const config = await getConfig();
@@ -30,8 +30,8 @@ async function executeMysqlQuery<
 		| ResultSetHeader
 		| RowDataPacket[][]
 		| ProcedureCallPacket = RowDataPacket[]
->(query: string, values?: any[]): Promise<T> {
-	let conn: PoolConnection | undefined;
+>(query: string, values?: any[] | null): Promise<T> {
+	let conn: PoolConnection | null = null;
 	try {
 		conn = await pool.getConnection();
 		const [rows] = await conn.execute<T>(query, values);
@@ -113,7 +113,7 @@ async function onListening(): Promise<void> {
 				console.info(
 					`Application Name:  ${config.applicationName} listening on ${bind}`
 				);
-				ServerEmitter();
+				// ServerEmitter();
 			} else {
 				console.error(
 					`Server address is null @ host: ${host}. Ensure the server is started and listening.`
@@ -125,29 +125,29 @@ async function onListening(): Promise<void> {
 	}
 }
 
-async function ServerEmitter(): Promise<void> {
-	const serverEmitter: EventEmitter = new EventEmitter();
-	serverEmitter.on('foo', () => console.log('a'));
-	serverEmitter.prependListener('foo', () => console.log('b'));
-	serverEmitter.emit('foo');
-	// First listener
-	serverEmitter.on('event', function firstListener() {
-		console.log('Hello! first listener');
-	});
-	// Second listener
-	serverEmitter.on('event', function secondListener(arg1, arg2) {
-		console.log(
-			`event with parameters ${arg1}, ${arg2} in second listener`
-		);
-	});
-	// Third listener
-	serverEmitter.on('event', function thirdListener(...args) {
-		const parameters: string = args.join(', ');
-		console.log(`event with parameters ${parameters} in third listener`);
-	});
+// async function ServerEmitter(): Promise<void> {
+// 	const serverEmitter: EventEmitter = new EventEmitter();
+// 	serverEmitter.on('foo', () => console.log('a'));
+// 	serverEmitter.prependListener('foo', () => console.log('b'));
+// 	serverEmitter.emit('foo');
+// 	// First listener
+// 	serverEmitter.on('event', function firstListener() {
+// 		console.log('Hello! first listener');
+// 	});
+// 	// Second listener
+// 	serverEmitter.on('event', function secondListener(arg1, arg2) {
+// 		console.log(
+// 			`event with parameters ${arg1}, ${arg2} in second listener`
+// 		);
+// 	});
+// 	// Third listener
+// 	serverEmitter.on('event', function thirdListener(...args) {
+// 		const parameters: string = args.join(', ');
+// 		console.log(`event with parameters ${parameters} in third listener`);
+// 	});
 
-	console.log(serverEmitter.listeners('event'));
+// 	console.log(serverEmitter.listeners('event'));
 
-	serverEmitter.emit('event', 1, 2, 3, 4, 5);
-}
+// 	serverEmitter.emit('event', 1, 2, 3, 4, 5);
+// }
 export { connection as default, executeMysqlQuery };

@@ -29,18 +29,29 @@ export default function (config: { applicationName: any }) {
 	const handlebars: ExpressHandlebars = create({
 		extname: '.hbs',
 		defaultLayout: 'main',
-		layoutsDir: path.join(__dirname, '..', 'public', '/views/layouts'),
-		partialsDir: path.join(__dirname, '..', 'public', '/views/partials'),
+		layoutsDir: path.join(
+			__dirname,
+			'..',
+			'..',
+			'public',
+			'/views/layouts'
+		),
+		partialsDir: path.join(
+			__dirname,
+			'..',
+			'..',
+			'public',
+			'/views/partials'
+		),
 		helpers: { ...helper }
 	});
 
 	app.engine('.hbs', handlebars.engine);
 	app.set('view engine', '.hbs');
-	app.set('views', path.join(__dirname, '..', 'public', '/views'));
+	app.set('views', path.join(__dirname, '..', '..', 'public', '/views'));
 	app.set('trust proxy', 1); // trust first proxy
 	app.enable('view cache');
 
-	app.use(express.static(path.join(__dirname, '..', 'public', '/views')));
 	console.info(`__dirname:  ${__dirname}`);
 
 	app.use(express.json());
@@ -48,11 +59,14 @@ export default function (config: { applicationName: any }) {
 	app.use(morgan('dev'));
 	app.use(cors());
 	app.use(
-		favicon(path.join(__dirname, '..', 'public', '/images/tw_logo.ico'))
+		favicon(
+			path.join(__dirname, '..', '..', 'public', '/images/tw_logo.svg')
+		)
 	);
 
 	app.use(express.static('public'));
 	app.use(express.static('src'));
+	app.use(express.static('dist'));
 	app.use('/', routers);
 
 	app.get('/favicon.ico', (_req: Request, res: Response) => {
@@ -92,8 +106,9 @@ export default function (config: { applicationName: any }) {
 			res.locals.error =
 				req.app.get('env') === 'development' ? error : {};
 
-			// render the error page
-			errorStatus = errors.status;
+			// render the error pagenpm start
+
+			// errorStatus = errors.status;
 			res.status(errorStatus || 500);
 			res.render('error');
 			next();
@@ -104,7 +119,20 @@ export default function (config: { applicationName: any }) {
 	app.use(function (_req: Request, res: Response, next: NextFunction) {
 		if (res.locals.partials) res.locals.partials = {};
 		next();
+		if (res.locals.helpers) res.locals.helpers = {};
+		next();
+		if (res.locals.rows) res.locals.rows = {};
+		next();
+		if (!res.locals.partials || !res.locals.helpers || !res.locals.rows) {
+			if (res.locals) res.locals = {};
+			next();
+		} else {
+			console.error(`res.locals is not set!`);
+			next();
+		}
 	});
 
 	return app;
 }
+
+export { Request, Response, NextFunction };

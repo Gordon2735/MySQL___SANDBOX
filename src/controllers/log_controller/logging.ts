@@ -11,6 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
+console.info(`LOGGING __dirname: ${__dirname}`);
 class Logger extends EventEmitter {
 	logFilePath: string;
 	logData: any[];
@@ -22,8 +23,13 @@ class Logger extends EventEmitter {
 
 		this.logFilePath = path.join(
 			__dirname,
-			'../../../logs/event_logs',
-			'event_logs.json'
+			'..',
+			'..',
+			'..',
+			'..',
+			'..',
+			'logs',
+			'/event_logs/event_logs.json'
 		);
 		this.logData = [];
 		this.loadLogData();

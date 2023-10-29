@@ -25,6 +25,7 @@
 		"moment": "^2.29.4",
 		"morgan": "^1.10.0",
 		"mysql2": "^3.6.2",
+		"node-popup": "^0.1.14",
 		"uuidv4": "^6.2.13"
 	},
 	"devDependencies": {

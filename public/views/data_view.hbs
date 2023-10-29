@@ -1,0 +1,42 @@
+{{> header_partial}}
+
+<h3 id="dataH3" class="data-h3">
+    MySQL Data View Table
+</h3>
+
+{{#if rows}}
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr>
+            {{#each columns}}
+                <th>{{this}}</th>
+            {{/each}}
+        </tr>
+        </thead>
+        <tbody>
+        {{#each rows}}
+            <tr>
+                {{#each this}}
+                    <td>{{this}}</td>
+                {{/each}}
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{else}}
+    <div class="alert alert-info">
+        <strong>Info!</strong> No data found.
+    </div>
+{{/if}}
+
+
+
+{{> footer_partial}}
+
+
+<style>
+    .data-h3 {
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>
