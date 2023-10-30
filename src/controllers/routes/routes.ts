@@ -1,6 +1,6 @@
 'use strict';
 
-import express, { Router } from 'express';
+import express, { Router, Request, Response } from 'express';
 import indexHandler, {
 	registerHandler,
 	registerPostHandler,
@@ -22,15 +22,19 @@ const registerPost_route: express.Router = router.post(
 );
 
 const login_route: express.Router = router.get('/login', loginHandler);
-const loginPost_route: express.Router = router.post('/login', (req, res) => {
-	loginPostHandler;
-	res.redirect('/login/data_view');
-});
+const loginPost_route: express.Router = router.post(
+	'/login',
+	(req: Request, res: Response) => {
+		console.info(`loginPost_route: ${req.body.username}`);
+		loginPostHandler;
+		res.redirect('/data_view');
+	}
+);
 
 const about_route: express.Router = router.get('/about', aboutHandler);
 
 const dataView_route: express.Router = router.get(
-	'/login/data_view',
+	'/data_view',
 	dataViewHandler
 );
 

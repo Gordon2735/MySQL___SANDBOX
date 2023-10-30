@@ -74,6 +74,7 @@ async function registerPostHandler(req: Request, res: Response): Promise<void> {
 			console.log(
 				`${username}:  Thank You for registering! Please login`
 			);
+			res.redirect('/login');
 		} else if (!username || !email || !password || !password2) {
 			errors.push({ msg: 'Please fill in all fields' });
 		} else if (password !== password2) {
@@ -124,6 +125,8 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		const { username, password }: any = req.body;
 		const user: any = await findUserByUsername(username);
 
+		res.redirect('/data_view');
+
 		if (!user) {
 			res.status(400).send({ message: 'Invalid Credentials!' });
 
@@ -145,7 +148,6 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 			`loginPostHandler had an ERROR: ${(error as Error).message}`
 		);
 		res.status(500).send(`Post Login Error: ${(error as Error).message}`);
-
 		return Promise.reject() as Promise<void>;
 	}
 }
