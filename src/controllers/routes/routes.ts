@@ -24,11 +24,10 @@ const registerPost_route: express.Router = router.post(
 const login_route: express.Router = router.get('/login', loginHandler);
 const loginPost_route: express.Router = router.post(
 	'/login',
-	(req: Request, res: Response) => {
-		console.info(`loginPost_route: ${req.body.username}`);
-		loginPostHandler;
-		res.redirect('/data_view');
-	}
+	// (req: Request, _res: Response) => {
+	// 	console.info(`loginPost_route: ${req.body.username}`);
+	loginPostHandler
+	// }
 );
 
 const about_route: express.Router = router.get('/about', aboutHandler);

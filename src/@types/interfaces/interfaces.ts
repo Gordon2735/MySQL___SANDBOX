@@ -23,4 +23,13 @@ interface ButtonElementWithPopover extends HTMLButtonElement {
 	popoverContent?: PopoverElement;
 }
 
-export { IUser as default, PopoverElement, ButtonElementWithPopover };
+interface SessionData {
+	user: any;
+}
+
+export {
+	IUser as default,
+	PopoverElement,
+	ButtonElementWithPopover,
+	SessionData
+};

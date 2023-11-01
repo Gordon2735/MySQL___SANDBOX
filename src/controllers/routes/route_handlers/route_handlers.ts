@@ -7,11 +7,20 @@ import {
 	findUserByUsername
 } from '../../../models/Schemas/userModel.js';
 import bcrypt from 'bcryptjs';
-import getRowsPacketUsers from '../../../models/Schemas/userModel.js';
+import { connection } from '../../../models/databases/mysqlDB.js';
+import { Connection } from 'mysql2/promise';
+import createLoginConfirmationPopup from '../../../utility/appFunction_utilities/login_popup.js';
+// import getRowsPacketUsers from '../../../models/Schemas/userModel.js';
 import { executeMysqlQuery } from '../../../bin/server.js';
 import { RowDataPacket } from 'mysql2/promise';
 
 const config = await getConfig();
+
+declare module 'express-session' {
+	interface Session {
+		data: SessionData;
+	}
+}
 
 // async function logThisEvent(
 // 	request: Request,
@@ -21,7 +30,7 @@ const config = await getConfig();
 // 	loggedEventControl();
 // }
 
-async function indexHandler(req: Request, res: Response): Promise<void> {
+async function indexHandler(_req: Request, res: Response): Promise<void> {
 	const index_script = `<script type="module" src="/src/ts/index.js" content="text/javascript"></script>`;
 	try {
 		res.set('Content-Type', 'text/html');
@@ -97,7 +106,7 @@ async function registerPostHandler(req: Request, res: Response): Promise<void> {
 	}
 }
 
-async function loginHandler(req: Request, res: Response): Promise<void> {
+async function loginHandler(_req: Request, res: Response): Promise<void> {
 	try {
 		const login_index = `<script type="module" src="/src/ts/login_index.js" content="text/javascript"></script>`;
 		res.set('Content-Type', 'text/html');
@@ -123,9 +132,10 @@ async function loginHandler(req: Request, res: Response): Promise<void> {
 async function loginPostHandler(req: Request, res: Response): Promise<void> {
 	try {
 		const { username, password }: any = req.body;
-		const user: any = await findUserByUsername(username);
 
-		res.redirect('/data_view');
+		createLoginConfirmationPopup();
+
+		const user: any = await findUserByUsername(username);
 
 		if (!user) {
 			res.status(400).send({ message: 'Invalid Credentials!' });
@@ -134,15 +144,29 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		}
 
 		const isMatch: boolean = await bcrypt.compare(password, user.password);
-		if (!isMatch) {
+		console.info(`isMatch: ${isMatch}`);
+
+		if (isMatch) {
+			res.status(200).send({ message: 'Login Successful!' });
+
+			req.session!.data = user;
+			setTimeout(() => {
+				res.redirect('/data_view');
+				// res.location('/data_view');
+				console.info(`LoginPostHandler fired and user was: ${user} || 
+				${username} || ${user.password} || 
+				the redirect should have us at /data_view
+			`);
+			}, 2000);
+			console.info(`user: ${user}`);
+			return Promise.resolve() as Promise<void>;
+		} else {
 			res.status(400).send({ message: 'Invalid Credentials!' });
 
 			return Promise.reject() as Promise<void>;
 		}
-		const users = await getRowsPacketUsers();
-		console.info(`users: ${users}`);
-
-		return Promise.resolve() as Promise<void>;
+		// const users = await getRowsPacketUsers();
+		// console.info(`users: ${users}`);
 	} catch (error: unknown) {
 		console.error(
 			`loginPostHandler had an ERROR: ${(error as Error).message}`
@@ -152,7 +176,42 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 	}
 }
 
-async function aboutHandler(req: Request, res: Response): Promise<void> {
+async function dataViewHandler(req: Request, res: Response): Promise<void> {
+	try {
+		// const { id, username, email, password }: any = req.body;
+		const conn: Connection = await connection();
+		// const { id, username, email }: any;
+		const query = `SELECT * FROM users`;
+		const { id, username, email }: any = await conn.query(query);
+		console.log(id, username, email);
+
+		const data_view_script = `<script type="module" src="/src/ts/data_view.js" content="text/javascript"></script>`;
+
+		res.set('Content-Type', 'text/html');
+		res.set('target', '_blank');
+		res.render('data_view', {
+			title: 'Data View',
+			layout: 'data_view_main',
+			partials: 'partials',
+			helpers: 'helpers',
+			script: [data_view_script],
+			user: req.session!.data,
+			parts: req.body,
+			rows: id,
+			username,
+			email
+		});
+
+		return Promise.resolve() as Promise<void>;
+	} catch (error: unknown) {
+		console.error(`dataViewHandler had an ERROR: ${error}`);
+		res.status(500).send('Server Error');
+
+		return Promise.reject() as Promise<void>;
+	}
+}
+
+async function aboutHandler(_req: Request, res: Response): Promise<void> {
 	try {
 		res.set('Content-Type', 'text/html');
 		res.set('target', '_blank');
@@ -171,41 +230,6 @@ async function aboutHandler(req: Request, res: Response): Promise<void> {
 		return Promise.reject() as Promise<void>;
 	}
 }
-
-const data_view_script = `<script type="module" src="/src/ts/data_view.js" content="text/javascript"></script>`;
-
-async function dataViewHandler(req: Request, res: Response): Promise<void> {
-	try {
-		const { id, username, email, password }: any = req.body;
-		const query = `SELECT * FROM users`;
-		const [rows]: RowDataPacket[] = await executeMysqlQuery(query, [
-			id,
-			username,
-			email,
-			password
-		]);
-
-		console.log(rows);
-
-		res.set('Content-Type', 'text/html');
-		res.set('target', '_blank');
-		res.render('data_view', {
-			title: 'Data View',
-			layout: 'data_view_main',
-			partials: 'partials',
-			helpers: 'helpers',
-			script: [data_view_script],
-			rows: rows
-		});
-		return Promise.resolve() as Promise<void>;
-	} catch (error: unknown) {
-		console.error(`dataViewHandler had an ERROR: ${error}`);
-		res.status(500).send('Server Error');
-
-		return Promise.reject() as Promise<void>;
-	}
-}
-
 export {
 	indexHandler as default,
 	registerHandler,

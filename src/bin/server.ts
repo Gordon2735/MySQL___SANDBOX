@@ -31,14 +31,15 @@ async function executeMysqlQuery<
 		| RowDataPacket[][]
 		| ProcedureCallPacket = RowDataPacket[]
 >(query: string, values?: any[] | null): Promise<T> {
-	let conn: PoolConnection | null = null;
+	// let conn: PoolConnection | null = null;
+	let conn: PoolConnection = await pool.getConnection();
 	try {
-		conn = await pool.getConnection();
 		const [rows] = await conn.execute<T>(query, values);
 		return rows;
 	} catch (error: unknown) {
 		console.error(`Error in executeMysqlQuery: ${error}`);
-		throw error as any as unknown;
+		// throw error as any as unknown;
+		return Promise.reject(error);
 	} finally {
 		if (conn) {
 			conn.release();

@@ -8,6 +8,7 @@ import express, {
 	Router
 } from 'express';
 import { create, ExpressHandlebars } from 'express-handlebars';
+import session from 'express-session';
 import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -62,6 +63,14 @@ export default function (config: { applicationName: any }) {
 		favicon(
 			path.join(__dirname, '..', '..', 'public', '/images/tw_logo.svg')
 		)
+	);
+
+	app.use(
+		session({
+			secret: 'secret-key',
+			resave: false,
+			saveUninitialized: true
+		})
 	);
 
 	app.use(express.static('public'));
