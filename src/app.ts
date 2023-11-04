@@ -53,8 +53,6 @@ export default function (config: { applicationName: any }) {
 	app.set('trust proxy', 1); // trust first proxy
 	app.enable('view cache');
 
-	console.info(`__dirname:  ${__dirname}`);
-
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 	app.use(morgan('dev'));
@@ -64,7 +62,6 @@ export default function (config: { applicationName: any }) {
 			path.join(__dirname, '..', '..', 'public', '/images/tw_logo.svg')
 		)
 	);
-
 	app.use(
 		session({
 			secret: 'secret-key',
@@ -72,7 +69,6 @@ export default function (config: { applicationName: any }) {
 			saveUninitialized: true
 		})
 	);
-
 	app.use(express.static('public'));
 	app.use(express.static('src'));
 	app.use(express.static('dist'));
@@ -114,8 +110,6 @@ export default function (config: { applicationName: any }) {
 			// set locals, only providing error in development
 			res.locals.error =
 				req.app.get('env') === 'development' ? error : {};
-
-			// render the error pagenpm start
 
 			// errorStatus = errors.status;
 			res.status(errorStatus || 500);

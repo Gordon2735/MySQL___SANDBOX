@@ -31,6 +31,5 @@ const routes: Router[] = [
 const thisRoute: express.Router = router;
 for (const route of routes) {
 	thisRoute.use(`/`, route);
-	console.info(`route: ${route}`);
 }
 export default router;

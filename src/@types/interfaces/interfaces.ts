@@ -27,9 +27,37 @@ interface SessionData {
 	user: any;
 }
 
+interface IConfig {
+	applicationName: string;
+	port: string | number;
+	host: string;
+	mysql: {
+		options: {
+			host: string;
+			port: number;
+			database: string;
+			user: string;
+			password: string;
+			waitForConnections: true;
+			queueLimit: 10;
+		};
+	};
+	readonly serverUrl: string;
+	client: any;
+	user: {
+		options: {
+			id: string;
+			username: string;
+			email: string;
+			password: string;
+		};
+	};
+}
+
 export {
 	IUser as default,
 	PopoverElement,
 	ButtonElementWithPopover,
-	SessionData
+	SessionData,
+	IConfig
 };

@@ -33,7 +33,7 @@ const loginPost_route: express.Router = router.post(
 const about_route: express.Router = router.get('/about', aboutHandler);
 
 const dataView_route: express.Router = router.get(
-	'/data_view',
+	'/login/data_view',
 	dataViewHandler
 );
 

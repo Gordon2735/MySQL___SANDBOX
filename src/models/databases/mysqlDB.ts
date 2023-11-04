@@ -12,7 +12,6 @@ async function connection(): Promise<mysql.Connection> {
 		password: config.mysql.options.password,
 		database: config.mysql.options.database,
 		waitForConnections: config.mysql.options.waitForConnections,
-		connectionLimit: config.mysql.options.connectionLimit,
 		queueLimit: config.mysql.options.queueLimit
 	});
 }
