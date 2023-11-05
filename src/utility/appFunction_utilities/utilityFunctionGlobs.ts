@@ -1,5 +1,7 @@
 'use strict';
 
+import { Response, Request, NextFunction } from '../../app.js';
+
 async function setAttributes(
 	element: HTMLElement,
 	attributes: object | string | any
@@ -59,4 +61,59 @@ async function appendChildren(
 	}
 }
 
-export { setAttributes as default, appendChildren };
+async function status500(
+	req: Request,
+	res: Response,
+	_next: NextFunction
+): Promise<void> {
+	try {
+		res.status(500).send('Server Error');
+		// next();
+		console.info(
+			`
+				%c
+				req.url: ${req.url},
+				req.body.username: ${req.body.username},
+				req.body.password: ${req.body.password},
+				req.body.id: ${req.body.id}					
+			`,
+			`
+				color: chartreuse;
+				font-family: 'Titillium Web', sans-serif; 
+				font-size: 0.85rem;
+				font-weight: bold;
+				background-color: black;						
+			`
+		);
+		// next();
+		return Promise.resolve() as Promise<void>;
+	} catch (error: unknown) {
+		res.status(500).send(
+			`
+				<p class="status-500">
+					Post Login Error: ${(error as Error).message}
+				</p>
+			`
+		);
+		// next();
+		console.info(
+			`
+				%c
+				req.url: ${req.url},
+				req.body.username: ${req.body.username},
+				req.body.password: ${req.body.password},
+				req.body.id: ${req.body.id}					
+			`,
+			`
+				color: chartreuse;
+				font-family: 'Titillium Web', sans-serif; 
+				font-size: 0.85rem;
+				font-weight: bold;
+				background-color: black;						
+			`
+		);
+		return Promise.reject() as Promise<void>;
+	}
+}
+
+export { setAttributes as default, appendChildren, status500 };

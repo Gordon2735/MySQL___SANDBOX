@@ -1,21 +1,34 @@
 'use strict';
 
-import setAttributes, { appendChildren } from './utilityFunctionGlobs.js';
+import setAttributes, {
+	appendChildren,
+	status500
+} from './utilityFunctionGlobs.js';
 import {
 	PopoverElement,
 	ButtonElementWithPopover
 } from '../../@types/interfaces/interfaces.js';
+import { Request, Response, NextFunction } from '../../app.js';
 
-export default async function createLoginConfirmationPopup(): Promise<void> {
+const request: Request = {} as Request;
+const response: Response = {} as Response;
+const next: NextFunction = {} as NextFunction;
+
+async function createLoginConfirmationPopup(
+	documents: Document
+): Promise<void> {
 	try {
-		const body_loginSection: HTMLBodyElement | null =
-			document.querySelector('.login-body');
+		const document: Document = documents;
+		const loginPopupSection = document.getElementById(
+			'loginPopupSection'
+		) as HTMLElement;
+
 		const loginPopover_styles: HTMLStyleElement =
 			document.createElement('style');
 
-		const popoverLoginSection: PopoverElement = document.createElement(
-			'section'
-		) as PopoverElement;
+		// const popoverLoginSection: PopoverElement = document.createElement(
+		// 	'section'
+		// ) as PopoverElement;
 		const loginSectionFigure: HTMLElement =
 			document.createElement('figure');
 		const loginSectionFigureImg: HTMLElement =
@@ -24,19 +37,27 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 			document.createElement('figcaption');
 		const loginSectionFigureFigcaptionH2: HTMLElement =
 			document.createElement('h2');
-		const loginSectionFigureFigcaptionP: HTMLElement =
+		const loginSectionFigureFigcaptionP1: HTMLElement =
+			document.createElement('p');
+		const loginSectionFigureFigcaptionP2: HTMLElement =
 			document.createElement('p');
 		const loginSectionButton: ButtonElementWithPopover =
 			document.createElement('popoverButton') as ButtonElementWithPopover;
 
 		const figcaptionH2Text: Text =
 			document.createTextNode('Login Confirmation');
-		const figcaptionPText: Text = document.createTextNode(
+		const figcaptionP1Text: Text = document.createTextNode(
 			`
-            You have successfully logged in, please press the 
-                "Continue" Button to access the
-                     MySQL Database Table Page!
-        `
+				Welcome ${request.body.username}!
+				You have successfully logged in, please press the 
+				"Continue" Button to access the
+				MySQL Database Table Page!
+        	`
+		);
+		const figcaptionP2Text: Text = document.createTextNode(
+			`
+				Your Login Email ${request.body.email}!            
+        	`
 		);
 		const loginSectionButtonText: Text =
 			document.createTextNode('Continue');
@@ -49,11 +70,11 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 			crossOriginIsolated: true
 		});
 
-		await setAttributes(popoverLoginSection, {
-			id: 'popoverContent',
-			class: 'login-section',
-			'data-target': '_blank'
-		});
+		// await setAttributes(popoverLoginSection, {
+		// 	id: 'popoverContent',
+		// 	class: 'login-section',
+		// 	'data-target': '_blank'
+		// });
 		await setAttributes(loginSectionFigure, {
 			id: 'loginSectionFigure',
 			class: 'login-section__figure'
@@ -72,9 +93,13 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 			id: 'loginSectionFigureFigcaptionH2',
 			class: 'login-section__figure__figcaption__h2'
 		});
-		await setAttributes(loginSectionFigureFigcaptionP, {
-			id: 'loginSectionFigureFigcaptionP',
-			class: 'login-section__figure__figcaption__p'
+		await setAttributes(loginSectionFigureFigcaptionP1, {
+			id: 'loginSectionFigureFigcaptionP1',
+			class: 'login-section__figure__figcaption__p2'
+		});
+		await setAttributes(loginSectionFigureFigcaptionP2, {
+			id: 'loginSectionFigureFigcaptionP2',
+			class: 'login-section__figure__figcaption__p2'
 		});
 		await setAttributes(loginSectionButton, {
 			id: 'popoverButton',
@@ -84,7 +109,7 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 			popovertargetaction: 'hide'
 		});
 
-		await appendChildren(popoverLoginSection, [
+		await appendChildren(loginPopupSection, [
 			loginSectionFigure,
 			loginSectionButton
 		]);
@@ -92,20 +117,19 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 			loginSectionFigureImg,
 			loginSectionFigureFigcaption,
 			loginSectionFigureFigcaptionH2,
-			loginSectionFigureFigcaptionP
+			loginSectionFigureFigcaptionP1,
+			loginSectionFigureFigcaptionP2
 		]);
 
 		loginSectionFigureFigcaptionH2.appendChild(figcaptionH2Text);
-		loginSectionFigureFigcaptionP.appendChild(figcaptionPText);
+		loginSectionFigureFigcaptionP1.appendChild(figcaptionP1Text);
+		loginSectionFigureFigcaptionP2.appendChild(figcaptionP2Text);
 		loginSectionButton.appendChild(loginSectionButtonText);
+		loginPopupSection?.appendChild(loginPopover_styles);
 
 		loginPopover_styles.innerHTML = /* CSS */ `
-
-		@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&family=Titillium+Web:ital,wght@0,200;0,400;0,700;1,200&display=swap');
-		${"font-family: 'Source Code Pro', monospace"}
-		${"font-family: 'Titillium Web', sans-serif"}
 		
-			.login-section {
+			.login-popup-section {
 				margin: 35% auto 4em auto;
 				position: relative;
 				box-sizing: border-box;
@@ -121,7 +145,7 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 				border-radius: 10px;
 			}
 
-			.login-section .login-section__figure {
+			.login-popup-section .login-section__figure {
 				margin: 0;
 				padding: 0;
 				position: absolute;
@@ -159,7 +183,8 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 				text-shadow: 1em 1em 2em hsla(0, 0%, 0%, 0.793);
 			}
 
-			.login-section__figure__figcaption__p {
+			.login-section__figure__figcaption__p1,
+			.login-section__figure__figcaption__p2 {
 				margin: 0;
 				text-align: center;
 				font-family: 'Source Code Pro', monospace;
@@ -207,12 +232,16 @@ export default async function createLoginConfirmationPopup(): Promise<void> {
 
 			
 		`;
-		body_loginSection?.appendChild(loginPopover_styles);
+		loginPopupSection?.appendChild(loginPopover_styles);
 
 		return Promise.resolve() as Promise<void>;
 	} catch (error: unknown) {
 		console.error(`createLoginConfirmationPopup had an ERROR: ${error}`);
 
+		await status500(request, response, next);
+
 		return Promise.reject() as Promise<void>;
 	}
 }
+
+export { createLoginConfirmationPopup };

@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register New User</title>
+    {{> meta_head}}
+    {{> seo_head}}
+    {{> styles_partial}}
+    {{{script}}}
+    <title>{{{title}}}</title>    
 </head>
-<body>
+<body id="registerBody" class="register-body">
     {{{body}}}
 </body>
 </html>

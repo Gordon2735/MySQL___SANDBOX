@@ -99,24 +99,24 @@ export default function (config: { applicationName: any }) {
 	});
 
 	// error handler
-	app.use(
-		(
-			error: unknown,
-			req: Request,
-			res: Response,
-			next: NextFunction,
-			errorStatus: number = 500
-		) => {
-			// set locals, only providing error in development
-			res.locals.error =
-				req.app.get('env') === 'development' ? error : {};
+	// app.use(
+	// 	(
+	// 		error: unknown,
+	// 		req: Request,
+	// 		res: Response,
+	// 		next: NextFunction,
+	// 		errorStatus: number = 500
+	// 	) => {
+	// 		// set locals, only providing error in development
+	// 		res.locals.error =
+	// 			req.app.get('env') === 'development' ? error : {};
 
-			// errorStatus = errors.status;
-			res.status(errorStatus || 500);
-			res.render('error');
-			next();
-		}
-	);
+	// 		// errorStatus = errors.status;
+	// 		res.status(errorStatus || 500);
+	// 		res.render('error');
+	// 		next();
+	// 	}
+	// );
 
 	// set Global Variables
 	app.use(function (_req: Request, res: Response, next: NextFunction) {
@@ -138,4 +138,4 @@ export default function (config: { applicationName: any }) {
 	return app;
 }
 
-export { Request, Response, NextFunction };
+export { Application, Request, Response, NextFunction };

@@ -6,8 +6,9 @@ import index_route, {
 	registerPost_route,
 	login_route,
 	loginPost_route,
-	about_route,
+	loginPopup_route,
 	dataView_route,
+	about_route,
 	startLogger_route
 } from './routes/routes.js';
 
@@ -23,8 +24,9 @@ const routes: Router[] = [
 	registerPost_route,
 	login_route,
 	loginPost_route,
-	about_route,
+	loginPopup_route,
 	dataView_route,
+	about_route,
 	startLogger_route
 ];
 

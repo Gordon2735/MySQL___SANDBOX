@@ -1,6 +1,7 @@
 'use strict';
 
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from '../../../app.js';
+import express, { Application } from 'express';
 import getConfig from '../../../../config/config.js';
 import {
 	insertUser,
@@ -9,7 +10,8 @@ import {
 import bcrypt from 'bcryptjs';
 import { connection } from '../../../models/databases/mysqlDB.js';
 import { Connection } from 'mysql2/promise';
-import createLoginConfirmationPopup from '../../../utility/appFunction_utilities/login_popup.js';
+import IUser from '../../../@types/interfaces/interfaces.js';
+import { createLoginConfirmationPopup } from '../../../utility/appFunction_utilities/login_popup.js';
 
 const config = await getConfig();
 
@@ -18,6 +20,8 @@ declare module 'express-session' {
 		data: SessionData;
 	}
 }
+
+const app: Application = express();
 
 async function indexHandler(_req: Request, res: Response): Promise<void> {
 	const index_script = `<script type="module" src="/src/ts/index.js" content="text/javascript"></script>`;
@@ -43,13 +47,15 @@ async function indexHandler(_req: Request, res: Response): Promise<void> {
 
 async function registerHandler(req: Request, res: Response): Promise<void> {
 	try {
+		const register_index = `<script type="module" src="/src/ts/register.js" content="text/javascript"></script>`;
 		res.set('Content-Type', 'text/html');
 		res.set('target', '_blank');
 		res.render('register', {
-			title: 'Register',
+			title: 'Register New User',
 			layout: 'register_main',
 			partials: 'partials',
-			helpers: 'helpers'
+			helpers: 'helpers',
+			script: [register_index]
 		});
 		return Promise.resolve() as Promise<void>;
 	} catch (error: unknown) {
@@ -63,7 +69,7 @@ async function registerHandler(req: Request, res: Response): Promise<void> {
 async function registerPostHandler(req: Request, res: Response): Promise<void> {
 	try {
 		const errors: any = [];
-		const { username, email, password, password2 } = req.body;
+		const { username, email, password, password2 }: IUser = req.body;
 		await insertUser(username, email, password);
 
 		if (username && email && password) {
@@ -93,17 +99,19 @@ async function registerPostHandler(req: Request, res: Response): Promise<void> {
 	}
 }
 
-async function loginHandler(_req: Request, res: Response): Promise<void> {
+async function loginHandler(req: Request, res: Response): Promise<void> {
 	try {
 		const login_index = `<script type="module" src="/src/ts/login_index.js" content="text/javascript"></script>`;
 		res.set('Content-Type', 'text/html');
 		res.set('target', '_blank');
 		res.render('login', {
-			title: 'Login',
+			title: 'User Login',
 			layout: 'login_main',
 			partials: 'partials',
 			helpers: 'helpers',
-			script: [login_index]
+			script: [login_index],
+			username: req.body.username,
+			email: req.body.email
 		});
 
 		return Promise.resolve() as Promise<void>;
@@ -117,11 +125,16 @@ async function loginHandler(_req: Request, res: Response): Promise<void> {
 
 async function loginPostHandler(req: Request, res: Response): Promise<void> {
 	try {
-		const { username, password }: any = req.body;
-
-		createLoginConfirmationPopup();
-
+		const { username, password }: IUser = req.body;
 		const user: any = await findUserByUsername(username);
+
+		res.redirect('/login_popup');
+		setTimeout(() => {
+			console.info(`LoginPostHandler fired and user was: ${user} || 
+			${user.id} || ${user.password} || 
+			the redirect should have us at /data_view
+		`);
+		}, 2000);
 
 		if (!user) {
 			res.status(400).send({ message: 'Invalid Credentials!' });
@@ -135,15 +148,10 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		if (isMatch) {
 			res.status(200).send({ message: 'Login Successful!' });
 
-			req.session!.data = user;
-			setTimeout(() => {
-				res.redirect('/login/data_view');
-				console.info(`LoginPostHandler fired and user was: ${user} || 
-				${username} || ${user.password} || 
-				the redirect should have us at /data_view
-			`);
-			}, 2000);
+			req.body.username = user;
+
 			console.info(`user: ${user}`);
+
 			return Promise.resolve() as Promise<void>;
 		} else {
 			res.status(400).send({ message: 'Invalid Credentials!' });
@@ -155,6 +163,94 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 			`loginPostHandler had an ERROR: ${(error as Error).message}`
 		);
 		res.status(500).send(`Post Login Error: ${(error as Error).message}`);
+		return Promise.reject() as Promise<void>;
+	}
+}
+
+async function loginPopupHandler(
+	req: Request,
+	res: Response,
+	_next: NextFunction
+): Promise<void> {
+	try {
+		const login_popup_utility = `<script type="module" src="/src/utility/appFunction_utilities/login_popup.js" content="text/javascript"></script>`;
+		const login_popup_index = `<script type="module" src="/src/ts/login_popup_index.js" content="text/javascript"></script>`;
+		res.set('Content-Type', 'text/html');
+		res.set('target', '_blank');
+		res.render('login_popup', {
+			title: 'Login Popup Confirmation',
+			layout: 'login_popup_main',
+			partials: 'partials',
+			helpers: 'helpers',
+			script_utility: [login_popup_utility],
+			script: [login_popup_index],
+			username: req.body.username,
+			email: req.body.email
+		});
+
+		let document: Document = null as unknown as Document;
+
+		app.get(
+			'/login_popup',
+			(req: Request, res: Response, _next: NextFunction) => {
+				document = req.body.document;
+				res.send(document);
+				createLoginConfirmationPopup(document);
+			}
+		);
+
+		const loginFormButton: HTMLButtonElement | null =
+			document?.querySelector('.login-section__button');
+
+		let popup_event: MouseEvent = null as unknown as MouseEvent;
+		return Promise.resolve()
+			.then(() => {
+				loginFormButton?.addEventListener(
+					'click',
+					async (event): Promise<MouseEvent> => {
+						console.info(
+							`loginFormButton Event fired and now should Redirect to /data_view`
+						);
+						event.preventDefault();
+						popup_event = event;
+						return popup_event;
+					}
+				);
+				// next();
+			})
+			.then(() => {
+				if (popup_event) {
+					console.info(
+						`
+							%c
+							popup_event: ${popup_event} || Now will attempt to Redirect to /data_view
+						`,
+						`
+							color: chartreuse;
+							font-family: 'Titillium Web', sans-serif; 
+							font-size: 0.85rem;
+							font-weight: bold;
+							background-color: black;						
+						`
+					);
+					return res.redirect('/data_view');
+				}
+			})
+			.catch((error: unknown) => {
+				console.error(
+					`loginFormButton EventListener within the Route Handler: LoginPopupHandler | Type of ERROR: ${error}`
+				);
+				res.status(500).send(
+					`loginFormButton EventListener Error: ${error}`
+				);
+				return Promise.reject() as Promise<void>;
+			}) as Promise<void>;
+	} catch (error: unknown) {
+		console.error(`loginPopupHandler had an ERROR: ${error}`);
+		res.status(500).send(
+			`Server Error occurred in the Route Handler called loginPopupHandler | Type of ERROR: ${error}`
+		);
+
 		return Promise.reject() as Promise<void>;
 	}
 }
@@ -171,7 +267,7 @@ async function dataViewHandler(req: Request, res: Response): Promise<void> {
 		res.set('Content-Type', 'text/html');
 		res.set('target', '_blank');
 		res.render('data_view', {
-			title: 'Data View',
+			title: 'MySQL Data View',
 			layout: 'data_view_main',
 			partials: 'partials',
 			helpers: 'helpers',
@@ -212,8 +308,9 @@ export {
 	indexHandler as default,
 	registerHandler,
 	registerPostHandler,
-	loginPostHandler,
 	loginHandler,
-	aboutHandler,
-	dataViewHandler
+	loginPostHandler,
+	loginPopupHandler,
+	dataViewHandler,
+	aboutHandler
 };
