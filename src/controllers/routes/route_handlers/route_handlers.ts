@@ -1,7 +1,7 @@
 'use strict';
 
-import { NextFunction, Request, Response } from '../../../app.js';
-import express, { Application } from 'express';
+import { Request, Response, NextFunction } from '../../../app.js';
+import express from 'express';
 import getConfig from '../../../../config/config.js';
 import {
 	insertUser,
@@ -10,7 +10,7 @@ import {
 import bcrypt from 'bcryptjs';
 import { connection } from '../../../models/databases/mysqlDB.js';
 import { Connection } from 'mysql2/promise';
-import IUser from '../../../@types/interfaces/interfaces.js';
+import { showSuccess } from '../../../ts/login_index.js';
 import { createLoginConfirmationPopup } from '../../../utility/appFunction_utilities/login_popup.js';
 
 const config = await getConfig();
@@ -21,7 +21,10 @@ declare module 'express-session' {
 	}
 }
 
-const app: Application = express();
+const app: express.Application = express();
+const request: Request = {} as Request;
+const response: Response = {} as Response;
+const nextFunction: NextFunction = {} as NextFunction;
 
 async function indexHandler(_req: Request, res: Response): Promise<void> {
 	const index_script = `<script type="module" src="/src/ts/index.js" content="text/javascript"></script>`;
@@ -45,7 +48,7 @@ async function indexHandler(_req: Request, res: Response): Promise<void> {
 	}
 }
 
-async function registerHandler(req: Request, res: Response): Promise<void> {
+async function registerHandler(_req: Request, res: Response): Promise<void> {
 	try {
 		const register_index = `<script type="module" src="/src/ts/register.js" content="text/javascript"></script>`;
 		res.set('Content-Type', 'text/html');
@@ -69,7 +72,7 @@ async function registerHandler(req: Request, res: Response): Promise<void> {
 async function registerPostHandler(req: Request, res: Response): Promise<void> {
 	try {
 		const errors: any = [];
-		const { username, email, password, password2 }: IUser = req.body;
+		const { username, email, password, password2 }: any = req.body;
 		await insertUser(username, email, password);
 
 		if (username && email && password) {
@@ -125,16 +128,8 @@ async function loginHandler(req: Request, res: Response): Promise<void> {
 
 async function loginPostHandler(req: Request, res: Response): Promise<void> {
 	try {
-		const { username, password }: IUser = req.body;
+		const { username, password }: any = req.body;
 		const user: any = await findUserByUsername(username);
-
-		res.redirect('/login_popup');
-		setTimeout(() => {
-			console.info(`LoginPostHandler fired and user was: ${user} || 
-			${user.id} || ${user.password} || 
-			the redirect should have us at /data_view
-		`);
-		}, 2000);
 
 		if (!user) {
 			res.status(400).send({ message: 'Invalid Credentials!' });
@@ -146,11 +141,11 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		console.info(`isMatch: ${isMatch}`);
 
 		if (isMatch) {
-			res.status(200).send({ message: 'Login Successful!' });
-
-			req.body.username = user;
-
-			console.info(`user: ${user}`);
+			app.get('/login', async (req: Request, res: Response) => {
+				const documents: Document = req.body.document;
+				res.send(documents);
+				await showSuccess(response, documents);
+			});
 
 			return Promise.resolve() as Promise<void>;
 		} else {
@@ -182,25 +177,27 @@ async function loginPopupHandler(
 			layout: 'login_popup_main',
 			partials: 'partials',
 			helpers: 'helpers',
-			script_utility: [login_popup_utility],
 			script: [login_popup_index],
+			script_utility: [login_popup_utility],
 			username: req.body.username,
 			email: req.body.email
 		});
 
-		let document: Document = null as unknown as Document;
+		let document: Document;
+		let loginFormButton: HTMLButtonElement | null;
 
 		app.get(
 			'/login_popup',
 			(req: Request, res: Response, _next: NextFunction) => {
 				document = req.body.document;
 				res.send(document);
-				createLoginConfirmationPopup(document);
+				loginFormButton = document.getElementById(
+					'loginFormButton'
+				) as HTMLButtonElement;
+				res.send(loginFormButton);
+				return createLoginConfirmationPopup(document);
 			}
 		);
-
-		const loginFormButton: HTMLButtonElement | null =
-			document?.querySelector('.login-section__button');
 
 		let popup_event: MouseEvent = null as unknown as MouseEvent;
 		return Promise.resolve()
@@ -272,7 +269,8 @@ async function dataViewHandler(req: Request, res: Response): Promise<void> {
 			partials: 'partials',
 			helpers: 'helpers',
 			script: [data_view_script],
-			user: req.session!.data,
+			user: req.body.username,
+			// user: req.session!.data,
 			parts: req.body,
 			rows: [id, username, email]
 		});

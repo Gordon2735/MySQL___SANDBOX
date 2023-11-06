@@ -4,10 +4,10 @@ import setAttributes, {
 	appendChildren,
 	status500
 } from './utilityFunctionGlobs.js';
-import {
-	PopoverElement,
-	ButtonElementWithPopover
-} from '../../@types/interfaces/interfaces.js';
+// import {
+// 	PopoverElement,
+// 	ButtonElementWithPopover
+// } from '../../@types/interfaces/interfaces.js';
 import { Request, Response, NextFunction } from '../../app.js';
 
 const request: Request = {} as Request;
@@ -18,31 +18,31 @@ async function createLoginConfirmationPopup(
 	documents: Document
 ): Promise<void> {
 	try {
-		const document: Document = documents;
-		const loginPopupSection = document.getElementById(
+		console.info(`documents: ${documents}`);
+		const bodyPopup = document.getElementById('loginPopupBody') as any;
+		const loginPopupSection: HTMLElement = bodyPopup.getElementById(
 			'loginPopupSection'
 		) as HTMLElement;
 
 		const loginPopover_styles: HTMLStyleElement =
 			document.createElement('style');
 
-		// const popoverLoginSection: PopoverElement = document.createElement(
-		// 	'section'
-		// ) as PopoverElement;
 		const loginSectionFigure: HTMLElement =
 			document.createElement('figure');
 		const loginSectionFigureImg: HTMLElement =
 			document.createElement('img');
 		const loginSectionFigureFigcaption: HTMLElement =
 			document.createElement('figcaption');
+		document.createElement('figcaption');
 		const loginSectionFigureFigcaptionH2: HTMLElement =
 			document.createElement('h2');
 		const loginSectionFigureFigcaptionP1: HTMLElement =
 			document.createElement('p');
 		const loginSectionFigureFigcaptionP2: HTMLElement =
 			document.createElement('p');
-		const loginSectionButton: ButtonElementWithPopover =
-			document.createElement('popoverButton') as ButtonElementWithPopover;
+		const loginSectionButton: HTMLButtonElement = document.createElement(
+			'popoverButton'
+		) as HTMLButtonElement;
 
 		const figcaptionH2Text: Text =
 			document.createTextNode('Login Confirmation');
@@ -109,10 +109,20 @@ async function createLoginConfirmationPopup(
 			popovertargetaction: 'hide'
 		});
 
-		await appendChildren(loginPopupSection, [
-			loginSectionFigure,
-			loginSectionButton
-		]);
+		// await appendChildren(loginPopupSection, [
+		// 	loginSectionFigure,
+		// 	loginSectionButton
+		// ]);
+
+		loginPopupSection.insertAdjacentHTML(
+			'afterbegin',
+			`${loginSectionFigure}`
+		);
+		loginPopupSection.insertAdjacentHTML(
+			'beforeend',
+			`${loginSectionButton}`
+		);
+
 		await appendChildren(loginSectionFigure, [
 			loginSectionFigureImg,
 			loginSectionFigureFigcaption,
@@ -125,7 +135,6 @@ async function createLoginConfirmationPopup(
 		loginSectionFigureFigcaptionP1.appendChild(figcaptionP1Text);
 		loginSectionFigureFigcaptionP2.appendChild(figcaptionP2Text);
 		loginSectionButton.appendChild(loginSectionButtonText);
-		loginPopupSection?.appendChild(loginPopover_styles);
 
 		loginPopover_styles.innerHTML = /* CSS */ `
 		
@@ -137,7 +146,7 @@ async function createLoginConfirmationPopup(
 				flex-direction: column;
 				justify-content: center;
 				align-items: center;
-				width: 47%;
+				width: 67%;
 				height: 40%;
 				text-align: center;
 				background-color: #ccc;
@@ -228,9 +237,7 @@ async function createLoginConfirmationPopup(
 
 			#popoverButton:focus + .popover {
 				display: block;
-			}
-
-			
+			}			
 		`;
 		loginPopupSection?.appendChild(loginPopover_styles);
 

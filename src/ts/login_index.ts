@@ -1,75 +1,30 @@
 'use strict';
 
-import { Response, Request, NextFunction } from '../app.js';
-import {
-	PopoverElement,
-	ButtonElementWithPopover
-} from '../@types/interfaces/interfaces.js';
-import { status500 } from '../utility/appFunction_utilities/utilityFunctionGlobs.js';
+import { Response } from '../app.js';
 
 console.info(`You have routed to the Login page.`);
 
-const request: Request = {} as Request;
-const response: Response = {} as Response;
-const nextFunction: NextFunction = {} as NextFunction;
+async function showSuccess(res: Response, doc: Document): Promise<void> {
+	const success_section = doc.getElementById('successSection') as HTMLElement;
 
-const body: HTMLElement | null = document.querySelector('.login-body');
+	const success_sectionStyle = success_section.style;
 
-const loginSectionButton: ButtonElementWithPopover = document.getElementById(
-	'popoverButton'
-) as ButtonElementWithPopover;
+	success_sectionStyle.display = 'block';
+	success_sectionStyle.visibility = 'visible';
 
-if (body) {
-	body?.addEventListener('DOMContentLoaded', async (): Promise<void> => {
-		try {
-			const popover: PopoverElement = document.getElementById(
-				'popoverContent'
-			) as PopoverElement;
+	const successCloseButton = doc.getElementById(
+		'successCloseButton'
+	) as HTMLButtonElement;
 
-			if (loginSectionButton) {
-				loginSectionButton.popoverContent = popover;
+	successCloseButton.addEventListener(
+		'click',
+		async (event: MouseEvent): Promise<void> => {
+			event.preventDefault();
+			success_section.style.display = 'none';
+			success_sectionStyle.visibility = 'hidden';
 
-				popover.toggle = function () {
-					if (this.style.display === 'none') {
-						this.style.display = 'block';
-					} else {
-						this.style.display = 'none';
-					}
-				};
-
-				loginSectionButton.addEventListener(
-					'click',
-					async (): Promise<void> => {
-						if (loginSectionButton?.popoverContent) {
-							loginSectionButton.popoverContent.toggle?.();
-						}
-					}
-				);
-				return Promise.resolve() as Promise<void>;
-			}
-
-			document.addEventListener(
-				'click',
-				async (event: MouseEvent): Promise<void> => {
-					if (
-						event.target !== loginSectionButton &&
-						event.target !== popover
-					) {
-						popover.style.display = 'none';
-					}
-				}
-			);
-
-			return Promise.resolve() as Promise<void>;
-		} catch (error: unknown) {
-			console.error(
-				`loginSectionButton.addEventListener had an ERROR: ${
-					(error as Error).message
-				}`
-			);
-			status500(request, response, nextFunction);
-
-			return Promise.reject() as Promise<void>;
+			return res.redirect('/login_popup');
 		}
-	});
+	);
 }
+export { showSuccess };

@@ -16,7 +16,7 @@ import { fileURLToPath } from 'url';
 import router from './controllers/router.js';
 import helper from '../public/views/helpers/helpers.js';
 import favicon from 'express-favicon';
-import loggedEventControl from './controllers/routes/route_handlers/logger_handlers.js';
+// import loggedEventControl from './controllers/routes/route_handlers/logger_handlers.js';
 import ErrorHandler from './errors/error_handler.js';
 
 export default function (config: { applicationName: any }) {
@@ -78,12 +78,12 @@ export default function (config: { applicationName: any }) {
 		res.status(204);
 	});
 
-	app.use('/start_logger', async (req: Request, _res: Response) => {
-		console.info(`req.url: ${req.url}`);
-		console.info('Start Logger Event has been Logged!');
-		// This Function controls the logged event triggered || emitted by the logger.
-		loggedEventControl(req, _res);
-	});
+	// app.use('/start_logger', async (req: Request, _res: Response) => {
+	// 	console.info(`req.url: ${req.url}`);
+	// 	console.info('Start Logger Event has been Logged!');
+	// 	// This Function controls the logged event triggered || emitted by the logger.
+	// 	loggedEventControl(req, _res);
+	// });
 
 	app.use(async (_req: Request, res: Response, next: NextFunction) => {
 		// To show the Application Name on the page.
@@ -138,4 +138,4 @@ export default function (config: { applicationName: any }) {
 	return app;
 }
 
-export { Application, Request, Response, NextFunction };
+export { express, Application, Request, Response, NextFunction };
