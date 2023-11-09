@@ -10,9 +10,7 @@ import {
 import bcrypt from 'bcryptjs';
 import { connection } from '../../../models/databases/mysqlDB.js';
 import { Connection } from 'mysql2/promise';
-import { showSuccess } from '../../../ts/login_index.js';
-import { createLoginConfirmationPopup } from '../../../utility/appFunction_utilities/login_popup.js';
-
+import getRowsPacketUsers from '../../../models/Schemas/userModel.js';
 const config = await getConfig();
 
 declare module 'express-session' {
@@ -104,7 +102,7 @@ async function registerPostHandler(req: Request, res: Response): Promise<void> {
 
 async function loginHandler(req: Request, res: Response): Promise<void> {
 	try {
-		const login_index = `<script type="module" src="/src/ts/login_index.js" content="text/javascript"></script>`;
+		// const login_index = `<script type="module" src="/src/ts/login_index.js" content="text/javascript"></script>`;
 		res.set('Content-Type', 'text/html');
 		res.set('target', '_blank');
 		res.render('login', {
@@ -112,7 +110,7 @@ async function loginHandler(req: Request, res: Response): Promise<void> {
 			layout: 'login_main',
 			partials: 'partials',
 			helpers: 'helpers',
-			script: [login_index],
+			// script: [login_index],
 			username: req.body.username,
 			email: req.body.email
 		});
@@ -140,12 +138,14 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		const isMatch: boolean = await bcrypt.compare(password, user.password);
 		console.info(`isMatch: ${isMatch}`);
 
-		if (isMatch) {
-			app.get('/login', async (req: Request, res: Response) => {
-				const documents: Document = req.body.document;
-				res.send(documents);
-				await showSuccess(response, documents);
-			});
+		if (isMatch === true) {
+			res.redirect('/data_view');
+			// app.get('/login', async (req: Request, res: Response) => {
+			// 	const documents: Document = req.body.document;
+			// 	showSuccess(response, documents);
+			// 	console.info(`user: ${user}`);
+			// 	res.send(documents);
+			// });
 
 			return Promise.resolve() as Promise<void>;
 		} else {
@@ -195,7 +195,7 @@ async function loginPopupHandler(
 					'loginFormButton'
 				) as HTMLButtonElement;
 				res.send(loginFormButton);
-				return createLoginConfirmationPopup(document);
+				// return createLoginConfirmationPopup(document);
 			}
 		);
 
@@ -247,17 +247,16 @@ async function loginPopupHandler(
 		res.status(500).send(
 			`Server Error occurred in the Route Handler called loginPopupHandler | Type of ERROR: ${error}`
 		);
-
 		return Promise.reject() as Promise<void>;
 	}
 }
 
-async function dataViewHandler(req: Request, res: Response): Promise<void> {
+async function dataViewHandler(_req: Request, res: Response): Promise<void> {
 	try {
 		const conn: Connection = await connection();
 		const query = `SELECT * FROM users`;
-		const { id, username, email }: any = await conn.query(query);
-		console.log(id, username, email);
+		const users: any = await conn.query(query);
+		console.info(`users username: ${users[0][4].username}`);
 
 		const data_view_script = `<script type="module" src="/src/ts/data_view.js" content="text/javascript"></script>`;
 
@@ -269,12 +268,10 @@ async function dataViewHandler(req: Request, res: Response): Promise<void> {
 			partials: 'partials',
 			helpers: 'helpers',
 			script: [data_view_script],
-			user: req.body.username,
-			// user: req.session!.data,
-			parts: req.body,
-			rows: [id, username, email]
+			users: users[0]
 		});
 
+		await conn.end();
 		return Promise.resolve() as Promise<void>;
 	} catch (error: unknown) {
 		console.error(`dataViewHandler had an ERROR: ${error}`);

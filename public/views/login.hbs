@@ -10,15 +10,16 @@
     </p>
 </header>
 
-<section id="successSection" class="success-section">
-		<p id="loginSuccess" class="login-success">
-			message:
+<section id="successSection" class="success-section" style="display: none;">
+		<p id="loginSuccess" class="login-message">
+			message: Login Successful!
         </p>    
         <p id="loginSuccessNews" class="login-success-news">
-			Login Successful!
+            welcome {{{username}}} to the news page!
+            EmAil: {{{email}}}
 		</p>
         <button type="button" id="successCloseButton" class="success-close-button">
-            Close
+            Proceed
         </button>		
 </section> 
 
@@ -33,18 +34,18 @@
             <input type="password" name="password" id="password" class="login-form__input" placeholder="Enter your password" required />
         </div>
         <div class="login-form__group">
-            <button type="submit" id="loginFormButton" class=".login-form__button">
+            <button type="submit" name="loginForm" for="loginForm" id="loginFormButton" class=".login-form__button">
                 Login
             </button>       
         </div>
     </form>
 </section>
 
-<style>
+<style>    
     .success-section {
         margin: 11em auto 0em auto;
         padding: 2em 1.2em 2em 1.2em;
-        display: none;
+        /* display: none; */
         visibility: hidden;
         width: 38%;
         min-height: 12em;
@@ -56,19 +57,19 @@
         filter: drop-shadow(0.3em 0.3em 0.7em hsla(88, 100%, 3%, 0.993));
         z-index: 1001;
     }
-    .success-section .login-success {        
+    .success-section .login-success {
         font-family: 'Alberta Stencil', monospace;
         font-size: 1.2em;
         color: hsla(90, 100%, 50%, 0.993);
         text-shadow: 0.3em 0.3em 0.7em hsla(88, 100%, 3%, 0.993);
-
     }
+
     .success-section .login-success-news {
         font-size: 1.7em;
         color: hsla(308, 100%, 50%, 0.993);
         text-shadow: 0.3em 0.3em 0.7em hsla(88, 100%, 3%, 0.993);
     }
-    .success-section .success-close-button {
+    .success-close-button {
         display: block;
         padding: 10px;
         width: 100%;
@@ -79,7 +80,7 @@
         border-radius: 5px;
         color: #fff;
         filter: drop-shadow(1em 1em 2em hsla(0, 0%, 0%, 0.793));
-		box-shadow: inset 0 0 0.5em hsla(0, 0%, 0%, 0.493);
+        box-shadow: inset 0 0 0.5em hsla(0, 0%, 0%, 0.493);
         cursor: pointer;
     }
     .success-close-button:hover {
@@ -92,9 +93,9 @@
         width: 102.5%;
         background-color: #013368;
         color: #f74803;
-		box-shadow: inset 0 0 0.5em hsla(0, 1%, 65%, 0.493);
+        box-shadow: inset 0 0 0.5em hsla(0, 1%, 65%, 0.493);
         filter: drop-shadow(1em 1em 12em hsla(0, 30%, 76%, 0.793));
-    }
+    }   
     .login-header {
         margin-top: 60px;
         text-align: center;
@@ -148,13 +149,12 @@
         background-color: #007bff;
         font-family: 'Titillium Web', sans-serif;
         font-size: 1.2rem;
-        border: 1px solid #002246;
+        border: 1px solid #007bff;
         border-radius: 5px;
         color: #fff;
         filter: drop-shadow(1em 1em 2em hsla(0, 0%, 0%, 0.793));
-		box-shadow: inset 0 0 0.5em hsla(0, 0%, 0%, 0.493);
+        box-shadow: inset 0 0 0.5em hsla(0, 0%, 0%, 0.493);
         cursor: pointer;
-
     }
     .login-form__button:hover {
         width: 101.5%;
@@ -166,7 +166,7 @@
         width: 102.5%;
         background-color: #013368;
         color: #f74803;
-		box-shadow: inset 0 0 0.5em hsla(0, 1%, 65%, 0.493);
+        box-shadow: inset 0 0 0.5em hsla(0, 1%, 65%, 0.493);
         filter: drop-shadow(1em 1em 12em hsla(0, 30%, 76%, 0.793));
     }
     .login-form__button:focus {

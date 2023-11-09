@@ -33,7 +33,7 @@ async function executeMysqlQuery<
 >(query: string, values?: any[] | null): Promise<T> {
 	let conn: PoolConnection = await pool.getConnection();
 	try {
-		const [rows] = await conn.execute<T>(query, values);
+		const [rows] = await conn.execute<T>(query, [values]);
 		return rows;
 	} catch (error: unknown) {
 		console.error(`Error in executeMysqlQuery: ${error}`);

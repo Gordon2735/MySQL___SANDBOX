@@ -42,57 +42,57 @@ font-family: 'Source Code Pro', monospace; */
         }
 
         .header-main {
-            margin: 0.1em auto 3em 32.3323%;
+            margin: 1em auto 1.5em 27.3323%;
             padding: 0.3em 0.3em;
-            position: absolute;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             width: 47%;
-            height: 27%;
-            border: 1.85em solid hsla(248, 53%, 58%, 0.979);
-            border-radius: 1.78em;
+            color: hsla(248, 39%, 39%, 0.993);
+            font-family: 'Black Ops One', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-align: center;
+            border: 0.7em solid hsla(248, 53%, 58%, 0.979);
+            border-radius: 1.38em;
             background-color: hsla(187, 52%, 80%, 0.993);
             filter: drop-shadow(0 0 0.75rem hsla(0, 0%, 0%, 0.673));
             box-shadow: inset 0.4em 0.4em 1.15em hsla(0, 0%, 0%, 0.473);
         }
 
         .header-main .header-h1 {
-            margin: 0.9em auto 1.2em auto;
+            margin: 1em 0em 0em 0em;
             padding: 0;
-            position: inline-block;
-            display: relative;
-            text-align: center;
-            text-shadow: 0 0 0.75rem hsla(0, 0%, 0%, 0.973);
-            font-family: 'Chango', sans-serif;
-            font-size: 2.2rem;
+            font-size: 2rem;
+            font-weight: 400;
             color: hsla(248, 39%, 39%, 0.993);
+            text-shadow: 0 0 0.75rem hsla(0, 0%, 0%, 0.616);
             letter-spacing: 0.2333em;
         }
 
         .header-main .header-h2 {
-            margin: 0.9em auto 0.9em auto;
+            margin: 1.2em auto 0.7em auto;
             padding: 0;
-            position: inline-block;
-            display: relative;
-            text-align: center;
-            text-shadow: 0 0 0.75rem hsla(0, 0%, 0%, 0.973);
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.723rem;
+            font-family: 'Titillium Web', sans-serif;
+            font-size: 1.323rem;
             color: hsla(0, 0%, 0%, 0.973);
+            text-shadow: 0 0 0.75rem hsla(0, 0%, 0%, 0.616);
             letter-spacing: 0.1333em;
         }
 
         #indexBtn {
-            margin-top: 30.5em;
+            margin: 10.5em auto 3.5em 44.3323%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             width: 15em;
             height: 4em;
             background-color: hsla(0, 1%, 67%, 0.993);
-            border: 0.7em solid hsla(207, 44%, 49%, 0.993);
+            border: 0.2em solid hsla(207, 44%, 49%, 0.993);
             border-radius: 7px;
-            font-family: 'Source Code Pro', monospace;
+            font-family: 'Titillium Web', sans-serif;
             font-size: 0.97rem;
             font-weight: 400;
             color: hsla(207, 44%, 49%, 0.993);
@@ -100,8 +100,24 @@ font-family: 'Source Code Pro', monospace; */
             filter: drop-shadow(1em 1em 2em hsla(0, 0%, 0%, 0.793));
             box-shadow: inset 0 0 0.5em hsla(0, 0%, 0%, 0.493);
         }
-
+        #indexBtnA {
+            text-decoration: none;
+            color: #000;
+        }
         #indexBtn:hover {
+            background-color: hsla(248, 39%, 39%, 0.555);
+            color: hsla(0, 0%, 100%, 0.993);
+            border: 1px solid hsla(0, 0%, 100%, 0.693);
+        }
+        #indexBtn:hover #indexBtnA {
+            color: hsla(0, 0%, 100%, 0.993);
+            text-decoration: none;
+        }
+        #indexBtnA:hover {
+            background-color: hsla(248, 39%, 39%, 0.555);
+            color: hsla(0, 0%, 100%, 0.993);
+        }
+        #indexBtnA:hover #indexBtn {
             background-color: hsla(248, 39%, 39%, 0.555);
             color: hsla(0, 0%, 100%, 0.993);
             border: 1px solid hsla(0, 0%, 100%, 0.693);
@@ -113,15 +129,6 @@ font-family: 'Source Code Pro', monospace; */
             filter: drop-shadow(1em 1em 14em hsla(248, 94%, 81%, 0.579));
             box-shadow: inset 0 0 0.5em hsla(248, 94%, 81%, 0.479);
         }
-
-        #indexBtnA {
-            text-decoration: none;
-            color: #000;
-        }
-        #indexBtnA:hover {
-            text-decoration: none;
-            color: #fff;
-        }
         @media screen and (max-width: 1790px) {
             .header-main .header-h1 {
                 font-size: 1.9rem;
@@ -130,7 +137,7 @@ font-family: 'Source Code Pro', monospace; */
         @media screen and (max-width: 1620px) {
             .header-main {
                 height: auto;
-                border: 1.45em solid hsla(248, 53%, 58%, 0.979);
+                border: 0.5em solid hsla(248, 53%, 58%, 0.979);
                 box-shadow: inset 0.4em 0.4em 0.55em hsla(0, 0%, 0%, 0.473);
             }
 
@@ -154,7 +161,7 @@ font-family: 'Source Code Pro', monospace; */
         @media screen and (max-width: 960px) {
             .header-main {
                 height: auto;
-                border: 0.85rem solid hsla(248, 53%, 58%, 0.979);
+                border: 0.35em solid hsla(248, 53%, 58%, 0.979);
                 box-shadow: inset 0.2em 0.2em 0.35em hsla(0, 0%, 0%, 0.473);
             }
             .header-main .header-h1 {
@@ -168,7 +175,7 @@ font-family: 'Source Code Pro', monospace; */
         @media screen and (max-width: 710px) {
             .header-main {
                 height: auto;
-                border: 0.65rem solid hsla(248, 53%, 58%, 0.979);
+                border: 0.25em solid hsla(248, 53%, 58%, 0.979);
             }
             .header-main .header-h1 {
                 font-size: 0.65rem;
@@ -181,7 +188,7 @@ font-family: 'Source Code Pro', monospace; */
         @media screen and (max-width: 550px) {
             .header-main {
                 height: auto;
-                border: 0.35rem solid hsla(248, 53%, 58%, 0.979);
+                border: 0.2em solid hsla(248, 53%, 58%, 0.979);
             }
             .header-main .header-h1 {
                 font-size: 0.35rem;
@@ -193,7 +200,7 @@ font-family: 'Source Code Pro', monospace; */
         @media screen and (max-width: 300px) {
             .header-main {
                 height: auto;
-                border: 0.15rem solid hsla(248, 53%, 58%, 0.979);
+                border: 0.1em solid hsla(248, 53%, 58%, 0.979);
             }
             .header-main .header-h1 {
                 font-size: 0.18rem;

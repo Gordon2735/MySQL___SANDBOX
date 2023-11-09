@@ -6,7 +6,7 @@
 import moment from 'moment';
 
 const helper = {
-	if_cond: (v1, operator, v2, options) => {
+	if_cond: (v1: any, operator: any, v2: any, options: any): any => {
 		switch (operator) {
 			case '===':
 				return v1 === v2 ? options.fn(this) : options.inverse(this);
@@ -28,10 +28,10 @@ const helper = {
 				return options.inverse(this);
 		}
 	},
-	formatDate: function (date, format) {
+	formatDate: function (date: any, format: any): string {
 		return moment(date).utc().format(format);
 	},
-	truncate: function (str, len) {
+	truncate: function (str: any, len: any): any {
 		if (str.length > len && str.length > 0) {
 			let new_str = str + ' ';
 			new_str = str.substring(0, len);
@@ -41,10 +41,15 @@ const helper = {
 		}
 		return str;
 	},
-	stripTags: function (input) {
+	stripTags: function (input: any): any {
 		return input.replace(/<(?:.|\n)*?>/gm, '');
 	},
-	editIcon: function (blogUser, loggedUser, blogId, floating = true) {
+	editIcon: function (
+		blogUser: any,
+		loggedUser: any,
+		blogId: any,
+		floating: boolean = true
+	): string {
 		if (blogUser._id.toString() == loggedUser._id.toString()) {
 			if (floating) {
 				return /*html*/ `<a href="/blogs/edit/${blogId}" class="btn-floating halfway-fab blue"><i class="fas fa-edit fa-small"></i></a>`;
@@ -55,7 +60,7 @@ const helper = {
 			return '';
 		}
 	},
-	select: function (selected, options) {
+	select: function (selected: any, options: any): any {
 		return options
 			.fn(this)
 			.replace(
@@ -66,6 +71,9 @@ const helper = {
 				new RegExp('>' + selected + '</option>'),
 				'selected="selected" $&'
 			);
+	},
+	isOdd: function (index: any): boolean {
+		return index % 2 === 1;
 	}
 };
 

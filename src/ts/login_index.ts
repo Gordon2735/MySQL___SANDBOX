@@ -1,30 +1,42 @@
 'use strict';
 
-import { Response } from '../app.js';
+// import { buffer } from 'node:stream/consumers';
+// import { Request, Response } from '../app.js';
 
 console.info(`You have routed to the Login page.`);
 
-async function showSuccess(res: Response, doc: Document): Promise<void> {
-	const success_section = doc.getElementById('successSection') as HTMLElement;
+// const req: Request = new Request('/login').body;
 
-	const success_sectionStyle = success_section.style;
+// const body: string | undefined | null = new TextDecoder().decode(buffer);
+// const parser = new DOMParser();
+// const docs = parser.parseFromString(body, 'text/html');
 
-	success_sectionStyle.display = 'block';
-	success_sectionStyle.visibility = 'visible';
+// async function showSuccess(res: Response, doc: Document): Promise<void> {
+// 	const success_section = doc.getElementById('successSection') as HTMLElement;
 
-	const successCloseButton = doc.getElementById(
-		'successCloseButton'
-	) as HTMLButtonElement;
+// 	const success_sectionStyle = success_section.style;
 
-	successCloseButton.addEventListener(
-		'click',
-		async (event: MouseEvent): Promise<void> => {
-			event.preventDefault();
-			success_section.style.display = 'none';
-			success_sectionStyle.visibility = 'hidden';
+// 	const getStyle: string | null = success_section.getAttribute('style');
+// 	console.info(`getStyle: ${getStyle}`);
 
-			return res.redirect('/login_popup');
-		}
-	);
-}
-export { showSuccess };
+// 	success_section.setAttribute('style', 'display: block;');
+// 	success_sectionStyle.visibility = 'visible';
+
+// 	const successCloseButton = doc.getElementById(
+// 		'loginFormButton'
+// 	) as HTMLButtonElement;
+
+// 	successCloseButton.addEventListener(
+// 		'click',
+// 		async (event: MouseEvent): Promise<void> => {
+// 			event.preventDefault();
+// 			success_section.setAttribute('style', 'display: none;');
+// 			// success_section.style.display = 'none';
+// 			success_sectionStyle.visibility = 'hidden';
+
+// 			res.redirect('/login_popup');
+// 			return;
+// 		}
+// 	);
+// }
+// export { showSuccess };
