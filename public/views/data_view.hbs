@@ -8,7 +8,6 @@
     <table class="table table-striped table-bordered table-hover">
         <thead class="thead">
             <tr class="trHead">
-                <th class="th">Count</th>
                 <th class="th">ID</th>
                 <th class="th">Username</th>
                 <th class="th">Email</th>
@@ -17,7 +16,6 @@
         <tbody>
             {{#each users}}
                 <tr class="{{#if (isOdd @index)}}odd{{else}}even{{/if}} trows"> 
-                    <td id="td_counter" class="td_counter" ></td>               
                     <td>{{this.id}}</td>
                     <td>{{this.username}}</td>
                     <td>{{this.email}}</td>

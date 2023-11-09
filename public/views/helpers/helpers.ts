@@ -4,6 +4,7 @@
 'use script';
 
 import moment from 'moment';
+import { Response } from '../../../src/app.js';
 
 const helper = {
 	if_cond: (v1: any, operator: any, v2: any, options: any): any => {
@@ -74,6 +75,11 @@ const helper = {
 	},
 	isOdd: function (index: any): boolean {
 		return index % 2 === 1;
+	},
+	jumpTo: function (page: string): void {
+		const response: Response = {} as Response;
+		response.redirect(page);
+		return;
 	}
 };
 

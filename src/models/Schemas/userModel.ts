@@ -3,7 +3,7 @@
 import { connection } from '../databases/mysqlDB.js';
 import { Connection } from 'mysql2/promise';
 import { RowDataPacket } from 'mysql2/promise';
-import { executeMysqlQuery } from '../../bin/server.js';
+import { executeMysqlQuery } from '../../controllers/mysql_controllers/mysql_pool_rowData.js';
 import { v4 as uuid } from 'uuid';
 import bcrypt from 'bcryptjs';
 
