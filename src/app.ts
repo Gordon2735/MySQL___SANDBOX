@@ -1,5 +1,7 @@
 'use strict';
 
+import getConfig from '../config/config.js';
+import mysql from 'mysql2/promise';
 import express, {
 	Application,
 	Request,
@@ -8,7 +10,12 @@ import express, {
 	Router
 } from 'express';
 import { create, ExpressHandlebars } from 'express-handlebars';
-import session from 'express-session';
+import Session from 'express-session';
+import * as session from 'express-session';
+import expressMySqlSession from 'express-mysql-session';
+// import { connection } from './models/databases/mysqlDB.js';
+// import { Connection } from 'mysql2/promise';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -18,14 +25,23 @@ import helper from '../public/views/helpers/helpers.js';
 import favicon from 'express-favicon';
 // import loggedEventControl from './controllers/routes/route_handlers/logger_handlers.js';
 import ErrorHandler from './errors/error_handler.js';
+declare module 'express-session' {
+	interface Session {
+		data: SessionData;
+		views: number;
+	}
+}
 
-export default function (config: { applicationName: any }) {
+export default async function (config: {
+	applicationName: any;
+}): Promise<express.Application> {
 	const app: Application = express();
 
 	const __filename: string = fileURLToPath(import.meta.url);
 	const __dirname: string = path.dirname(__filename);
 	const errors: ErrorHandler = new ErrorHandler(404, 'Not Found');
 	const routers: Router = router;
+	const oneDay = 1000 * 60 * 60 * 24;
 
 	const handlebars: ExpressHandlebars = create({
 		extname: '.hbs',
@@ -62,13 +78,45 @@ export default function (config: { applicationName: any }) {
 			path.join(__dirname, '..', '..', 'public', '/images/tw_logo.svg')
 		)
 	);
+	const configs = await getConfig();
+
+	const options: {
+		host: string;
+		user: string;
+		password: string;
+		database: string;
+		waitForConnections: true;
+		queueLimit: 10;
+		sessionid: string;
+	} = {
+		host: configs.mysql.options.host,
+		user: configs.mysql.options.user,
+		password: configs.mysql.options.password,
+		database: configs.mysql.options.database,
+		waitForConnections: configs.mysql.options.waitForConnections,
+		queueLimit: configs.mysql.options.queueLimit,
+		sessionid: configs.sessions.sessionid
+	};
+
+	// const pool: mysql.Pool = mysql.createPool(options);
+	// const session = Session as typeof Session;
+
+	// const dbConnection: () => Promise<mysql.Connection> = connection;
+
+	const MySQLStore = expressMySqlSession(session) as any;
+	// const sessionStore = await new MySQLStore(options, dbConnection());
+	const sessionStore = await new MySQLStore(options);
+
 	app.use(
-		session({
-			secret: 'secret-key',
+		Session({
+			secret: `${process.env.SESSION_KEY}`,
 			resave: false,
-			saveUninitialized: true
+			saveUninitialized: true,
+			store: sessionStore,
+			cookie: { maxAge: oneDay }
 		})
 	);
+	app.use(cookieParser());
 	app.use(express.static('public'));
 	app.use(express.static('src'));
 	app.use(express.static('dist'));
@@ -77,13 +125,6 @@ export default function (config: { applicationName: any }) {
 	app.get('/favicon.ico', (_req: Request, res: Response) => {
 		res.status(204);
 	});
-
-	// app.use('/start_logger', async (req: Request, _res: Response) => {
-	// 	console.info(`req.url: ${req.url}`);
-	// 	console.info('Start Logger Event has been Logged!');
-	// 	// This Function controls the logged event triggered || emitted by the logger.
-	// 	loggedEventControl(req, _res);
-	// });
 
 	app.use(async (_req: Request, res: Response, next: NextFunction) => {
 		// To show the Application Name on the page.
@@ -99,40 +140,29 @@ export default function (config: { applicationName: any }) {
 	});
 
 	// error handler
-	// app.use(
-	// 	(
-	// 		error: unknown,
-	// 		req: Request,
-	// 		res: Response,
-	// 		next: NextFunction,
-	// 		errorStatus: number = 500
-	// 	) => {
-	// 		// set locals, only providing error in development
-	// 		res.locals.error =
-	// 			req.app.get('env') === 'development' ? error : {};
+	app.use(
+		(
+			error: unknown,
+			req: Request,
+			res: Response,
+			next: NextFunction,
+			errorStatus: number = 500
+		) => {
+			// set locals, only providing error in development
+			res.locals.error =
+				req.app.get('env') === 'development' ? error : {};
 
-	// 		// errorStatus = errors.status;
-	// 		res.status(errorStatus || 500);
-	// 		res.render('error');
-	// 		next();
-	// 	}
-	// );
-
-	// set Global Variables
-	app.use(function (_req: Request, res: Response, next: NextFunction) {
-		if (res.locals.partials) res.locals.partials = {};
-		next();
-		if (res.locals.helpers) res.locals.helpers = {};
-		next();
-		if (res.locals.rows) res.locals.rows = {};
-		next();
-		if (!res.locals.partials || !res.locals.helpers || !res.locals.rows) {
-			if (res.locals) res.locals = {};
-			next();
-		} else {
-			console.error(`res.locals is not set!`);
+			// errorStatus = errors.status;
+			res.status(errorStatus || 500);
+			res.render('error');
 			next();
 		}
+	);
+
+	// set Global Variables
+	app.use(function (req: Request, res: Response, next: NextFunction) {
+		res.locals.username = req.body.username;
+		res.locals.email = req.body.email;
 	});
 
 	return app;

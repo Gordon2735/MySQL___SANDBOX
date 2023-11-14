@@ -14,11 +14,11 @@ const host: string = config.host;
 const serverUrl: string = config.serverUrl;
 
 // Logic to start the server
-const app: Application = App(config);
+const app: Promise<Application> = App(config);
 const server: http.Server<
 	typeof http.IncomingMessage,
 	typeof http.ServerResponse
-> = http.createServer(app);
+> = http.createServer(await app);
 
 await turnOnListener();
 

@@ -1,11 +1,27 @@
 'use strict';
 
 // import { buffer } from 'node:stream/consumers';
-// import { Request, Response } from '../app.js';
+import { Request, Response } from '../app.js';
+
+const req = new Request('/login').body as Request | null;
+const res = new Response('/login').body as Response | null;
 
 console.info(`You have routed to the Login page.`);
 
-// const req: Request = new Request('/login').body;
+console.info(
+	`
+        %c
+        username: ${res?.locals.username},
+        email: ${res?.locals.email} 
+    `,
+	`
+        color: chartreuse;
+        font-family: 'Titillium Web', sans-serif; 
+        font-size: 0.85rem;
+        font-weight: bold;
+        background-color: black;						
+    `
+);
 
 // const body: string | undefined | null = new TextDecoder().decode(buffer);
 // const parser = new DOMParser();

@@ -8,9 +8,6 @@ async function setAttributes(
 ): Promise<void> {
 	Object.keys(attributes).map((keys: string): void => {
 		try {
-			console.log(
-				`element: ${element} as the following key/attributes added: ${keys}: ${attributes}`
-			);
 			element?.setAttribute(keys, attributes[keys]);
 		} catch (error: unknown) {
 			console.error(`Error in setAttributes: ${error}`);

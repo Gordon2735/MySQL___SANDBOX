@@ -1,6 +1,7 @@
 'use strict';
 
 import { RowDataPacket } from 'mysql2';
+import { SessionData } from 'express-session';
 
 interface IUser extends RowDataPacket {
 	id?: number;
@@ -23,9 +24,9 @@ interface ButtonElementWithPopover extends HTMLButtonElement {
 	popoverContent?: PopoverElement;
 }
 
-interface SessionData {
-	user: any;
-}
+// interface SessionData {
+// 	user: any;
+// }
 
 interface IConfig {
 	applicationName: string;
@@ -53,6 +54,8 @@ interface IConfig {
 		};
 	};
 }
+
+// Define a custom type that extends the Express SessionData interface
 
 export {
 	IUser as default,

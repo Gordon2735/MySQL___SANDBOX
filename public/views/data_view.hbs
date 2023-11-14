@@ -1,5 +1,9 @@
 {{> header_partial_login}}
 
+<section id="welcomeSection" class="welcome-section">
+    {{{views}}}
+</section>
+
 <h3 id="dataH3" class="data-h3">
     MySQL Data View Table
 </h3>
@@ -33,6 +37,18 @@
 
 
 <style>
+
+    .views {
+        margin: 1.5em auto 0em 7%;
+        position: absolute;
+        display: inline-block;
+        font-family: 'Black Ops One', sans-serif;
+        font-size: 1.0023rem;
+        font-weight: 400;
+        color: hsla(298, 97%, 49%, 0.981);
+        text-shadow: 0.08em 0.08em 0.432em hsla(0, 0%, 0%, 0.4716);
+        letter-spacing: 0.2333em;
+    }
     .data-view-body {
         margin: 0;
         padding: 0;
@@ -47,7 +63,7 @@
         color:hsla(208, 98%, 25%, 0.993);
     }
     .table {
-        margin: 1em 0em 0em 30%;
+        margin: 1em 0em 0em 5%;
         border-collapse: collapse;
         font-size: 0.9em;
         min-width: 400px;
