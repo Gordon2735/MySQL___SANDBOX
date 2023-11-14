@@ -1,15 +1,21 @@
+```ts
+
 'use strict';
 
 import { Request, Response, NextFunction } from '../../../app.js';
 import express from 'express';
 import getConfig from '../../../../config/config.js';
 import createUserTable, {
+	createSessionsTable,
+	// insertSession,
 	insertUser,
 	findUserByUsername
 } from '../../../models/Schemas/userModel.js';
 import bcrypt from 'bcryptjs';
 import { connection } from '../../../models/databases/mysqlDB.js';
 import { Connection } from 'mysql2/promise';
+// import { Session, SessionData } from 'express-session';
+// import { v4 as uuid } from 'uuid';
 
 const config = await getConfig();
 const app: express.Application = express();
@@ -104,6 +110,9 @@ async function registerPostHandler(
 		const errors: any = [];
 
 		createUserTable();
+		// if (!req.body.username) {
+		// 	next();
+		// }
 
 		const { username, email, password, password2 }: any = req.body;
 		await insertUser(username, email, password);
@@ -194,6 +203,8 @@ async function loginHandler(req: Request, res: Response): Promise<void> {
 
 async function loginPostHandler(req: Request, res: Response): Promise<void> {
 	try {
+		// await createSessionsTable();
+
 		const { username, password }: any = req.body;
 		const user: any = await findUserByUsername(username);
 
@@ -216,7 +227,7 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		};
 		sessionView();
 
-		app.use((_req: Request, res: Response, next: NextFunction) => {
+		app.use((req: Request, res: Response, next: NextFunction) => {
 			res.locals.id = user.id;
 			res.locals.username = user.username;
 			res.locals.email = user.email;
@@ -230,6 +241,14 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		console.info(
 			`id: ${user.id} || user: ${user.username} || email: ${user.email}`
 		);
+
+		// const sessionid: string = uuid();
+		// const user_id = `${user.id}` as string;
+		// const secretkey = process.env.SESSION_KEY as string;
+		// const userid = user.username as string;
+		// const session: Session & Partial<SessionData> = req.session;
+
+		// await insertSession(sessionid, user_id, secretkey, userid, session);
 
 		if (!user) {
 			res.status(400).send({ message: 'Invalid Credentials!' });
@@ -282,6 +301,10 @@ async function loginPopupHandler(
 	try {
 		let username: string = '';
 		let email: string = '';
+		// app.get('login', (_req: Request, res: Response) => {
+		// 	req.body.username = username;
+		// 	req.body.email = email;
+		// });
 
 		req.body.username = username;
 		req.body.email = email;
@@ -436,3 +459,6 @@ export {
 	dataViewHandler,
 	aboutHandler
 };
+
+
+```
