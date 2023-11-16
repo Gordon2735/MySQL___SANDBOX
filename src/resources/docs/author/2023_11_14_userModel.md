@@ -1,3 +1,4 @@
+```ts
 'use strict';
 
 import { connection } from '../databases/mysqlDB.js';
@@ -6,6 +7,7 @@ import { RowDataPacket } from 'mysql2/promise';
 import { executeMysqlQuery } from '../../controllers/mysql_controllers/mysql_pool_rowData.js';
 import { v4 as uuid } from 'uuid';
 import bcrypt from 'bcryptjs';
+import { Session, SessionData } from 'express-session';
 
 async function createUserTable(): Promise<void> {
 	try {
@@ -52,6 +54,34 @@ async function createSessionsTable(): Promise<void> {
 		Promise.reject() as Promise<void>;
 	}
 }
+
+// async function insertSession(
+// 	sessionid: string,
+// 	user_id: string,
+// 	secretkey: string,
+// 	userid: string,
+// 	session: Session & Partial<SessionData>
+// ): Promise<void> {
+// 	try {
+// 		const conn: Connection = await connection();
+// 		const query = `INSERT INTO sessions (sessionid, user_id, secretkey, userid, session) VALUES (?, ?, ?, ?, ?)`;
+// 		await conn.query(query, [
+// 			sessionid,
+// 			user_id,
+// 			secretkey,
+// 			userid,
+// 			session
+// 		]);
+
+// 		conn.end();
+// 		return Promise.resolve() as Promise<void>;
+// 	} catch (error: unknown) {
+// 		console.info(
+// 			`There was an Error in the insertSession method of the userModels; ERROR: ${error}`
+// 		);
+// 		Promise.reject() as Promise<void>;
+// 	}
+// }
 
 async function insertUser(
 	username: string,
@@ -110,7 +140,9 @@ async function getRowsPacketUsers(): Promise<RowDataPacket[]> {
 export {
 	createUserTable as default,
 	createSessionsTable,
+	// insertSession,
 	insertUser,
 	findUserByUsername,
 	getRowsPacketUsers
 };
+```
