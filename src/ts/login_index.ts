@@ -2,17 +2,20 @@
 
 // import { buffer } from 'node:stream/consumers';
 import { Request, Response } from '../app.js';
+// import getConfig from '../../config/config.js';
 
 const req = new Request('/login').body as Request | null;
 const res = new Response('/login').body as Response | null;
 
 console.info(`You have routed to the Login page.`);
 
+// const config = await getConfig();
+
 console.info(
 	`
         %c
-        username: ${res?.locals.username},
-        email: ${res?.locals.email} 
+        username: ${req?.body.user_id},
+        data: ${req?.body.user} 
     `,
 	`
         color: chartreuse;

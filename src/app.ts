@@ -10,9 +10,10 @@ import express, {
 } from 'express';
 import { create, ExpressHandlebars } from 'express-handlebars';
 import Session from 'express-session';
-import * as session from 'express-session';
+import * as MySQLStoreClass from 'express-session';
 import expressMySqlSession from 'express-mysql-session';
 import cookieParser from 'cookie-parser';
+import { createSessionsTable } from './models/Schemas/userModel.js';
 import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -21,10 +22,12 @@ import router from './controllers/router.js';
 import helper from '../public/views/helpers/helpers.js';
 import favicon from 'express-favicon';
 import ErrorHandler from './errors/error_handler.js';
+
 declare module 'express-session' {
 	interface Session {
 		data: SessionData;
 		views: number;
+		session_id: Session & Partial<SessionData>;
 	}
 }
 
@@ -81,21 +84,29 @@ export default async function (config: {
 		user: string;
 		password: string;
 		database: string;
-		waitForConnections: true;
-		queueLimit: 10;
-		sessionid: string;
+		waitForConnections: boolean;
+		queueLimit: number;
+		session_id: string;
+		createDatabaseTable: boolean;
+		user_id: string;
+		secretkey: string;
 	} = {
 		host: configs.mysql.options.host,
 		user: configs.mysql.options.user,
 		password: configs.mysql.options.password,
 		database: configs.mysql.options.database,
-		waitForConnections: configs.mysql.options.waitForConnections,
+		waitForConnections: true,
 		queueLimit: configs.mysql.options.queueLimit,
-		sessionid: configs.sessions.sessionid
+		session_id: configs.sessions.session_id,
+		createDatabaseTable: false,
+		user_id: configs.sessions.user_id,
+		secretkey: `${process.env.SESSION_KEY}`
 	};
 
-	const MySQLStore = expressMySqlSession(session) as any;
-	const sessionStore = await new MySQLStore(options);
+	let session = MySQLStoreClass;
+	const MySQLStore = expressMySqlSession(session);
+	const sessionStore = new MySQLStore(options);
+	createSessionsTable();
 
 	app.use(
 		Session({
@@ -103,7 +114,10 @@ export default async function (config: {
 			resave: false,
 			saveUninitialized: true,
 			store: sessionStore,
-			cookie: { maxAge: oneDay }
+			cookie: {
+				maxAge: oneDay,
+				sameSite: true
+			}
 		})
 	);
 	app.use(cookieParser());
@@ -130,24 +144,24 @@ export default async function (config: {
 	});
 
 	// error handler
-	app.use(
-		(
-			error: unknown,
-			req: Request,
-			res: Response,
-			next: NextFunction,
-			errorStatus: number = 500
-		) => {
-			// set locals, only providing error in development
-			res.locals.error =
-				req.app.get('env') === 'development' ? error : {};
+	// app.use(
+	// 	(
+	// 		error: unknown,
+	// 		req: Request,
+	// 		res: Response,
+	// 		next: NextFunction,
+	// 		errorStatus: number = 500
+	// 	) => {
+	// 		// set locals, only providing error in development
+	// 		res.locals.error =
+	// 			req.app.get('env') === 'development' ? error : {};
 
-			// errorStatus = errors.status;
-			res.status(errorStatus || 500);
-			res.render('error');
-			next();
-		}
-	);
+	// 		// errorStatus = errors.status;
+	// 		res.status(errorStatus || 500);
+	// 		res.render('error');
+	// 		next();
+	// 	}
+	// );
 
 	// set Global Variables
 	app.use(function (req: Request, res: Response, next: NextFunction) {

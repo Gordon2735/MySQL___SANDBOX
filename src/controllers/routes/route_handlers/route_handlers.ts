@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from '../../../app.js';
 import express from 'express';
 import getConfig from '../../../../config/config.js';
 import createUserTable, {
+	insertSession,
 	insertUser,
 	findUserByUsername
 } from '../../../models/Schemas/userModel.js';
@@ -147,12 +148,32 @@ async function loginHandler(req: Request, res: Response): Promise<void> {
 			helpers: 'helpers',
 			script: [login_index],
 			username: req.body.username,
-			email: req.body.email
+			email: req.body.email,
+			sessionView: `${await sessionView()}`
 		});
 
 		app.use((req: Request, _res: Response, _next: NextFunction) => {
 			return req.body;
 		});
+
+		async function sessionView(): Promise<string> {
+			if (!req?.session.views) {
+				req.session.views = 1;
+				return `
+						<p class="sessionParaFirst">
+							First View: | ${req.session.views} |
+						</p>
+					`;
+			} else {
+				req.session.views++;
+				return `
+						<p class="sessionParaFirst">
+							Number of times you visited View: | ${req.session.views} |
+						</p>
+					`;
+			}
+		}
+		sessionView();
 
 		return Promise.resolve()
 			.then(() => {
@@ -197,26 +218,7 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 		const { username, password }: any = req.body;
 		const user: any = await findUserByUsername(username);
 
-		let sessionView = (): string => {
-			if (!req.session.views) {
-				req.session.views = 1;
-				return `
-						<p class="sessionParaFirst">
-							First View: | ${req.session.views} |
-						</p>
-					`;
-			} else {
-				req.session.views++;
-				return `
-						<p class="sessionParaFirst">
-							Number of times you visited View: | ${req.session.views} |
-						</p>
-					`;
-			}
-		};
-		sessionView();
-
-		app.use((_req: Request, res: Response, next: NextFunction) => {
+		app.use((_req: Request, res: Response, _next: NextFunction) => {
 			res.locals.id = user.id;
 			res.locals.username = user.username;
 			res.locals.email = user.email;
@@ -225,7 +227,14 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 				`id: ${user.id} || user: ${user.username} || email: ${user.email}`
 			);
 
-			next();
+			// let session_id: string;
+			return insertSession(
+				req.session.session_id,
+				user.username,
+				config.session_key,
+				user.id,
+				req.session.data
+			);
 		});
 		console.info(
 			`id: ${user.id} || user: ${user.username} || email: ${user.email}`
@@ -239,6 +248,11 @@ async function loginPostHandler(req: Request, res: Response): Promise<void> {
 
 		const isMatch: boolean = await bcrypt.compare(password, user.password);
 		console.info(`isMatch: ${isMatch}`);
+
+		req.body.username = user.username;
+		req.body.email = user.email;
+		res.locals.username = req.body.username;
+		res.locals.email = req.body.email;
 
 		if (isMatch === true) {
 			console.info(
@@ -359,24 +373,25 @@ async function loginPopupHandler(
 
 async function dataViewHandler(req: Request, res: Response): Promise<void> {
 	try {
+		const viewNumber: number = req.session.views;
 		const conn: Connection = await connection();
 		const query = `SELECT * FROM users`;
 		const users: any = await conn.query(query);
-		console.info(`users username: ${users[0][0].username}`);
+		console.info(`session.data: ${req.session.data}`);
 
 		const data_view_script = `<script type="module" src="/src/ts/data_view.js" content="text/javascript"></script>`;
 
 		res.set('Content-Type', 'text/html');
 		res.set('target', '_blank');
 		res.render('data_view', {
-			views: `<p class="views">| ${req.session.views} |</p>`,
+			views: `<p class="views">| ${viewNumber} |</p>`,
 			title: 'MySQL Data View',
 			layout: 'data_view_main',
 			partials: 'partials',
 			helpers: 'helpers',
 			script: [data_view_script],
-			logged_user: res.locals.username,
-			user_email: res.locals.email,
+			logged_user: req.body.username,
+			user_email: req.body.email,
 			users: users[0]
 		});
 
@@ -384,8 +399,8 @@ async function dataViewHandler(req: Request, res: Response): Promise<void> {
 			`
 				%c
 				data_view handler ::
-				req.body.username: ${req.body.username},
-				req.body.email: ${req.body.email},
+				req.body.username: ${res.locals.username},
+				req.body.email: ${res.locals.email},
 				res.locals.username: ${res.locals.username} 
 				res.locals.email: ${res.locals.email} 
 			`,
