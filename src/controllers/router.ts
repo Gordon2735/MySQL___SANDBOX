@@ -8,6 +8,7 @@ import index_route, {
 	loginPost_route,
 	loginPopup_route,
 	dataView_route,
+	logout_route,
 	about_route,
 	startLogger_route
 } from './routes/routes.js';
@@ -26,6 +27,7 @@ const routes: Router[] = [
 	loginPost_route,
 	loginPopup_route,
 	dataView_route,
+	logout_route,
 	about_route,
 	startLogger_route
 ];

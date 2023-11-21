@@ -112,7 +112,7 @@ export default async function (config: {
 		Session({
 			secret: `${process.env.SESSION_KEY}`,
 			resave: false,
-			saveUninitialized: true,
+			saveUninitialized: false,
 			store: sessionStore,
 			cookie: {
 				maxAge: oneDay,
@@ -144,24 +144,24 @@ export default async function (config: {
 	});
 
 	// error handler
-	// app.use(
-	// 	(
-	// 		error: unknown,
-	// 		req: Request,
-	// 		res: Response,
-	// 		next: NextFunction,
-	// 		errorStatus: number = 500
-	// 	) => {
-	// 		// set locals, only providing error in development
-	// 		res.locals.error =
-	// 			req.app.get('env') === 'development' ? error : {};
+	app.use(
+		(
+			error: unknown,
+			req: Request,
+			res: Response,
+			next: NextFunction,
+			errorStatus: number = 500
+		) => {
+			// set locals, only providing error in development
+			res.locals.error =
+				req.app.get('env') === 'development' ? error : {};
 
-	// 		// errorStatus = errors.status;
-	// 		res.status(errorStatus || 500);
-	// 		res.render('error');
-	// 		next();
-	// 	}
-	// );
+			// errorStatus = errors.status;
+			res.status(errorStatus || 500);
+			res.render('error');
+			next();
+		}
+	);
 
 	// set Global Variables
 	app.use(function (req: Request, res: Response, next: NextFunction) {

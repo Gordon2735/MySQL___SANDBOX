@@ -28,6 +28,12 @@ interface ButtonElementWithPopover extends HTMLButtonElement {
 // 	user: any;
 // }
 
+interface Session {
+	data: SessionData;
+	views: number;
+	session_id: Session & Partial<SessionData>;
+}
+
 interface IConfig {
 	applicationName: string;
 	port: string | number;
@@ -62,5 +68,6 @@ export {
 	PopoverElement,
 	ButtonElementWithPopover,
 	SessionData,
+	Session,
 	IConfig
 };

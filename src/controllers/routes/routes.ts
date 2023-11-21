@@ -8,6 +8,7 @@ import indexHandler, {
 	loginPostHandler,
 	loginPopupHandler,
 	dataViewHandler,
+	logout,
 	aboutHandler
 } from './route_handlers/route_handlers.js';
 import startLogger_handler from './route_handlers/logger_handlers.js';
@@ -34,6 +35,8 @@ const dataView_route: express.Router = router.get(
 	dataViewHandler
 );
 
+const logout_route: express.Router = router.post('/logout', logout);
+
 const about_route: express.Router = router.get('/about', aboutHandler);
 
 const startLogger_route: express.Router = router.get(
@@ -49,6 +52,7 @@ export {
 	loginPost_route,
 	loginPopup_route,
 	dataView_route,
+	logout_route,
 	about_route,
 	startLogger_route
 };

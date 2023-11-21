@@ -11,6 +11,15 @@ import createUserTable, {
 import bcrypt from 'bcryptjs';
 import { connection } from '../../../models/databases/mysqlDB.js';
 import { Connection } from 'mysql2/promise';
+import Session from 'express-session';
+
+declare module 'express-session' {
+	interface Session {
+		data: SessionData;
+		views: number;
+		session_id: Session & Partial<SessionData>;
+	}
+}
 
 const config = await getConfig();
 const app: express.Application = express();
@@ -180,12 +189,12 @@ async function loginHandler(req: Request, res: Response): Promise<void> {
 				console.info(`loginHandler processed`);
 			})
 			.then(() => {
-				if (res.locals.username) {
+				if (req.body.username) {
 					console.info(
 						`
 							%c
-							username: ${res.locals.username},
-							email: ${res.locals.email} 
+							username: ${req.body.username},
+							email: ${req.body.email} 
 						`,
 						`
 							color: chartreuse;
@@ -423,6 +432,17 @@ async function dataViewHandler(req: Request, res: Response): Promise<void> {
 	}
 }
 
+async function logout(req: Request, res: Response): Promise<void> {
+	req?.session.destroy((error: unknown) => {
+		if (!error) {
+			return res.redirect('/');
+		}
+		sessionStorage.close();
+		res.clearCookie(req.body.sessions);
+		return res.redirect('/login');
+	}) as Session.Session & Partial<Session.SessionData>;
+}
+
 async function aboutHandler(_req: Request, res: Response): Promise<void> {
 	try {
 		res.set('Content-Type', 'text/html');
@@ -449,5 +469,6 @@ export {
 	loginPostHandler,
 	loginPopupHandler,
 	dataViewHandler,
+	logout,
 	aboutHandler
 };

@@ -2,11 +2,15 @@
 
 <section id="welcomeSection" class="welcome-section">
     {{{views}}}
+    <h3 id="dataH3" class="data-h3">
+        MySQL Data View Table
+    </h3>
+    <form action="/logout" id="logoutForm" class="logout-form" method="POST">
+        <button type="submit" name="logoutForm" for="logoutForm" value="logout" id="dataviewLogoutBtn" class="dataview-logout-btn">Logout</button>
+    </form>
 </section>
 
-<h3 id="dataH3" class="data-h3">
-    MySQL Data View Table
-</h3>
+
 
 {{#if users}}
     <table class="table table-striped table-bordered table-hover">
@@ -37,10 +41,15 @@
 
 
 <style>
-
+    .data-view-body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background-color: hsla(188, 53%, 80%, 0.644);
+        font-family: 'Titillium Web', sans-serif;
+    }
     .views {
-        margin: 1.5em auto 0em 7%;
-        position: absolute;
+        margin: 1.5em 0em 0em 7%;
         display: inline-block;
         font-family: 'Black Ops One', sans-serif;
         font-size: 1.0023rem;
@@ -49,17 +58,47 @@
         text-shadow: 0.08em 0.08em 0.432em hsla(0, 0%, 0%, 0.4716);
         letter-spacing: 0.2333em;
     }
-    .data-view-body {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        background-color: hsla(188, 53%, 80%, 0.644);
-        font-family: 'Titillium Web', sans-serif;
-    }
     .data-h3 {
-        margin: 20px 0em 0em 21%;
+        margin: 1.5em 0em 0em 10%;
+        display: inline-block;
         font-size: 20px;
         color:hsla(208, 98%, 25%, 0.993);
+    }
+
+    .logout-form {
+        margin: 1.5em 0em 0em 13%;
+        display: inline-block;
+    }
+
+    .logout-form .dataview-logout-btn {    
+        padding: 0.2em;
+        display: inline-block;
+		width: 10em;
+		height: 2.9em;
+		background-color: hsla(0, 1%, 67%, 0.993);
+		border: 0.7em solid hsla(207, 44%, 49%, 0.993);
+		border-radius: 7px;
+		font-family: 'Source Code Pro', monospace;
+		font-size: 0.97rem;
+		font-weight: 400;
+		color: hsla(207, 44%, 49%, 0.993);
+		cursor: pointer;
+		filter: drop-shadow(1em 1em 2em hsla(0, 0%, 0%, 0.793));
+		box-shadow: inset 0 0 0.5em hsla(0, 0%, 0%, 0.493);
+    }
+
+    .dataview-logout-btn:hover {
+        background-color: hsla(248, 39%, 39%, 0.555);
+		color: hsla(0, 0%, 100%, 0.993);
+		border: 1px solid hsla(0, 0%, 100%, 0.693);
+    }
+
+    .dataview-logout-btn:active {
+        background-color: hsla(248, 97%, 15%, 0.555);
+		color: hsla(0, 0%, 100%, 0.493);
+		border: 1px solid hsla(248, 94%, 81%, 0.979);
+		filter: drop-shadow(1em 1em 14em hsla(248, 94%, 81%, 0.579));
+		box-shadow: inset 0 0 0.5em hsla(248, 94%, 81%, 0.479);
     }
     .table {
         margin: 1em 0em 0em 5%;
